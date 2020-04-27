@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>开洋木业生产系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> 
+   <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+</head>
+<br>
+<div class="layui-fluid">
+  <button class="layui-btn" id="branch_btn" name="branch_btn">新增批次号</button>
+ </div>
+ <br>
+<div class="layui-fluid">
+  批次号:
+  <div class="layui-inline">
+    <input class="layui-input" name="branchNo" id="branchNo" autocomplete="off">
+  </div>
+  生产单号:
+  <div class="layui-inline">
+    <input class="layui-input" name="produceNo" id="produceNo" autocomplete="off">
+  </div>
+  订单编号:
+  <div class="layui-inline">
+    <input class="layui-input" name="detailsNo" id="detailsNo" autocomplete="off">
+  </div>
+  
+  <button class="layui-btn" data-type="reload">搜索</button>
+</div>
+<table class="layui-hide" id="test" lay-filter="test"></table>
+ 
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail" >查看</a>
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+
+  <a class="layui-btn layui-btn-xs" lay-event="detail_page">进入详单</a>
+</script>
+<script src="../static/layui/layui.js"></script>
+<script>
+layui.use(['laydate', 'layer', 'table', 'carousel', 'upload', 'element', 'slider','jquery'], function(){
+  var layer = layui.layer //弹层
+  ,table = layui.table //表格
+  ,element = layui.element //元素操作
+  ,laydate=laydate ;//日期
+  var $ = layui.$;
+
+  $( function () {
+    $('#branch_btn').click( function () {
+         window.location.href = '../view/addBranch.html';
+    });
+  });
+  
+  
+  //执行一个 table 实例
+  table.render({
+    elem: '#test'
+   // ,height:645
+    ,$limit:20
+    ,url: '../model/order.php' //数据接口  
+    ,title: '用户表'
+    ,page: {//开启分页
+          layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
+          ,first: '首页'
+          ,last:'尾页'
+        }
+    ,toolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+      title: '提示'
+      ,layEvent: 'LAYTABLE_TIPS'
+      ,icon: 'layui-icon-tips'
+    }]
+    ,totalRow: true //开启合计行
+    ,cols: [[ //表头
+     // {type: 'checkbox', fixed: 'left'},
+    // {field: '批次号', title: '批次号', width:150, sort: true, fixed: 'left', totalRowText: '合计：'}
+    {field: '批次号', title: '批次号', width:150, sort: true, fixed: 'left'}
+      ,{field: '生产单号', title: '生产单号', width:250, sort: true, fixed: 'left'}
+      ,{field: '订单编号', title: '订单编号', width:250,sort: true, fixed: 'left'}
+      ,{field: '导入人员', title: '导入人员', width:250,sort: true, fixed: 'left'}
+      ,{fixed: 'right', title: '操作' ,width: 250, align:'center', toolbar: '#barDemo'}
+    ]]
+    ,id:'testReload'
+  });
+    // 数据表重载，这个是配合上面的表格一起使用的
+   var $=layui.$, active = {
+           reload:function(){
+            //  var branchNo=$('#branchNo').val()
+               table.reload('testReload',{
+                　　 // 点击查询和刷新数据表会把以下参数传到后端进行查找和分页显示
+                     where:{
+                      branchNo:$('#branchNo').val(),
+                      produceNo:$("input[name='produceNo']").val(),
+                      detailsNo:$("input[name='detailsNo']").val()
+                
+                  }
+                  ,page:{
+                    curr:1 //重新从第1页开始
+                  }
+               },'data');
+              }
+        };
+    
+    $('.layui-btn').on('click',function(){
+       var type=$(this).data('type');
+       active[type]?active[type].call(this):'';
+
+      });
+
+  //监听行工具事件
+  table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var data = obj.data //获得当前行数据
+    ,layEvent = obj.event; //获得 lay-event 对应的值
+    if(layEvent === 'detail'){
+      layer.open({
+            type: 2,
+            area: ['700px', '450px'],
+            fixed: false,
+            maxmin: true,
+            content: '../view/orderDetail.html',
+            success: function(layero, index) {
+            // 方式一  其实就是获取的 子页面的 div 	 
+          //  var div = layero.find('iframe').contents().find('#layuiform-useradmin');  // div.html() div里面的内容,不包含当前这个div
+               
+             // 方式二  
+             var body = layer.getChildFrame('body', index);  // body.html() body里面的内容 
+             /* ---- 附加内容 看看就好  Begin ---- */
+          //   var iframeWindow = window['layui-layer-iframe'+ index]   // 方式一： 得到iframe页的窗口对象
+            var iframeWindow = window[layero.find('iframe')[0]['name']];   // 方式二： 得到iframe页的窗口对象
+            /* ---- 附加内容 看看就好  End ---- */
+
+            // 测试 ：
+           // body.find("#usercode").val("admin");  // 方式一
+          //  div.find("#username").val("admin");  // 方式二  
+          body.find("#branchNo").val(data.批次号);
+          body.find("#produceNo").val(data.生产单号);
+          body.find("#detailsNo").val(data.订单编号);
+          body.find("#createName").val(data.导入人员);
+          body.find('.layui-input').prop('disabled',true);//设置只读
+          }
+        });
+    } else if(layEvent === 'del'){
+      layer.confirm('真的删除行么', function(index){
+          $.post( '../model/orderDelete.php', {
+            branchNo: data.批次号
+          }, function ( res ) {
+            layer.msg( res );
+            obj.del(); //删除对应行（tr）的DOM结构
+          });
+      });
+      
+    } else if(layEvent === 'edit'){
+        layer.open({
+                type: 2,
+                title: '修改信息',
+                fixed: false,
+                maxmin: true,
+                area: ['700px','450px'],
+                shadeClose: true,
+                content:'../model/EditOrder.php?id='+data.批次号,
+                success: function(layero,index) {
+                   parent.form.render();
+               },
+               end: function () {  //刷新页面
+                    location.reload();
+                }
+
+            });
+    } else if(layEvent === 'detail_page'){
+      window.location.href = '../view/orderGroups.html?id='+data.批次号;
+    } 
+      
+  });
+
+});
+</script>
+</body>
+</html>

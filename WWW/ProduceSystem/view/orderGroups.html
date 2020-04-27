@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>开洋木业生产系统</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../static/modules/treetable-lay/treetable.css" media="all">
+ 
+</head>
+<body  >
+    <div class="layui-fluid" >
+		<br>
+		<div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label">批次号：</label>
+				<div class="layui-input-inline">
+					<input type="text" readonly="true" class="layui-input" id="branchNo" name="branchNo" placeholder="">
+				</div>
+			</div>
+			<!--
+            <div class="layui-inline">
+				<div class="layui-upload">
+					<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
+					<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
+				  </div>
+			</div>
+			-->
+			<div class="layui-inline">
+				<div class="layui-upload"></div>
+					<button class="layui-btn layui-btn-normal" id="btn-improt"  >引入数据</button>
+				  </div>
+			</div>
+		</div>
+	
+        <div class="layui-form-item">
+			<div class="layui-inline">
+				<label class="layui-form-label" style="display: none;" >客户姓名</label>
+				<div class="layui-input-inline" style="display: none;" >
+					<input type="text" class="layui-input" id="customer" placeholder="">
+				</div>
+            <div class="layui-inline">
+            <label class="layui-form-label">组单号</label>
+            <div class="layui-input-inline">
+                <input type="text" class="layui-input" id="detailsNo" placeholder="">
+            </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">生产单号</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="produceNo" placeholder="">
+                </div>
+            </div>
+            <div class="layui-inline">
+             <button class="layui-btn" id="btn-search" data-type="reload">搜索</button>
+             </div>
+		</div>
+
+		<div class="xm-d2">
+			<div class="xm-d2-hang1">
+			  <div class="pzright" >
+				<p class="xm-d1-p2" style="width:50%;display: flex;justify-content: flex-start;float:left;">
+					<!--<button id="add" onclick="addPermission()" class="layui-btn layui-btn-radius btnys"><i class="layui-icon">&#xe608;</i>添加</button>--> 
+					<button class="layui-btn" id="btn-expand">全部展开</button>
+					<button class="layui-btn" id="btn-fold">全部折叠</button>
+					<button class="layui-btn" id="btn-refresh">刷新表格</button>
+					<button class="layui-btn" id="btnPrint">打印</button>
+			   </p>
+			   <p class="xm-d1-p2" style="width:50%;display: flex;justify-content: flex-end;float:right;">
+			 	 <button class="layui-btn" style="background-color:red" id="btnDel">删除详单</button>
+				</p>
+			  </div>  
+			 <div class="clear"></div>  
+			</div>
+			<div class="xm-d2-hang2">
+			   <table id="treeTableDetails" class="layui-table" lay-filter="treeTableDetails"></table>
+			</div>
+		</div>
+
+		<script type="text/javascript" src="../static/layui/layui.js"></script>
+		<script type="text/javascript" src="../static/modules/treetable-lay/treetable.js"></script>
+		<script type="text/javascript" src="../static/layui/jquery.js"></script>
+		<script type="text/javascript">
+
+	layui.config({
+        base: '../static/modules/'
+    }).extend({
+        treetable: 'treetable-lay/treetable'
+    }).use(['layer', 'table', 'treetable','element','upload'], function () {
+        var table = layui.table;
+        var layer = layui.layer;
+		var treetable = layui.treetable;
+		var element = layui.element;
+		var upload = layui.upload;
+		var form = layui.form;
+		var index = layui.index;
+		var layer = layui.layer;
+
+		$data='';
+			//输入批次号 赋值            
+			$(function(){
+				layer.load(1);
+				$('#branchNo').val(GetQueryString("id"));
+				function GetQueryString(name){
+					var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+					var r = window.location.search.substr(1).match(reg);
+					if(r!=null)return unescape(r[2]); return null;
+				}
+				layer.closeAll('loading');
+			});
+
+
+			//导入Excel
+			upload.render({
+				elem: '#upload-change'
+				,url:  '../model/ExImport.php'
+				,bindAction: '#upload-change-action'
+				,accept: 'file' //普通文件
+				,multiple: true
+				,auto: false
+				,exts: 'xls|excel|xlsx'
+				,before: function(input){    
+						var data = {};    
+						data.branchNo = $('#branchNo').val();    
+						this.data=data;  
+					}  
+				,done: function(res){
+					 //如果上传失败
+					if (res.code == 0) {
+						return layer.msg(res.err);
+					}
+					//上传成功
+					if (res.code >0){
+						layer.alert(res.err, {icon: 6}, function () {
+							window.location.href = '../view/orderGroups.html?id='+$('#branchNo').val(); 
+								parent.layer.close(index);
+						});
+					}
+           		}
+			});
+			//根据批次号获取数据
+			$('#btn-improt').click(function () {
+				$.ajax({
+						url:'../model/GetMmhData.php',
+						data:{'branchNo':$('#branchNo').val()},
+						type:"GET",
+						dataType:"JSON",
+						success:function(data){
+							if(data.msg=='OK'){
+								GetTreeTableData();
+								layer.msg('数据引入成功!');
+							}else{
+								layer.msg(data.msg);
+							}
+					
+						},
+						error:function(data){
+							//layer.alert("435");
+							///$.messager.alert('错误',data);
+							layer.msg("GetMmhData.php错误");
+						}
+					});
+		
+			});
+			//根据批次号获取数据
+			$('#btnDel').click(function () {
+				$.ajax({
+						url:'../model/orderGroups.php',
+						data:{'branchNo':$('#branchNo').val(),'type':"DELETE"},
+						type:"GET",
+						dataType:"JSON",
+						success:function(data){
+							renderTable(data.data);
+							layer.msg('该批次号的详单被删除'+data.count+'条数据');
+						},
+						error:function(data){
+							//layer.alert("435");
+							$.messager.alert('错误',data.msg);
+						}
+					});
+		
+			});
+
+				//检索按钮
+			$('#btn-search').click(function () {
+				GetTreeTableData();
+			});
+			// 获取treetable数据
+			function GetTreeTableData(){
+				$.ajax({
+						url:'../model/orderGroups.php',
+						data:{'branchNo':$('#branchNo').val()
+								,'customer':$('#customer').val()
+								,'detailsNo':$('#detailsNo').val()
+								,'produceNo':$('#produceNo').val()
+								,'type':'SELECT'
+								},
+						type:"GET",
+						dataType:"JSON",
+						success:function(data){
+								renderTable(data.data);
+							//	location.reload(); //删除成功后再刷新
+						},
+						error:function(data){
+							//layer.alert("435");
+							$.messager.alert('错误',data.msg);
+						}
+					});
+			}
+		
+		//初始化
+		GetTreeTableData();
+        // 渲染表格
+        var renderTable = function ($data) {//树桩表格参考文档：https://gitee.com/whvse/treetable-lay
+            layer.load(2);
+            treetable.render({
+                treeColIndex: 1,//树形图标显示在第几列
+                treeSpid: 0,//最上级的父级id
+                treeIdName: 'id',//id字段的名称
+                treePidName: 'pid',//pid字段的名称
+                treeDefaultClose: false,//是否默认折叠
+                treeLinkage: true,//父级展开时是否自动展开所有子级
+				//icon_key: '详单编号',
+                elem: '#treeTableDetails',
+				//url:'../model/orderGroups.php',
+				data:$data,
+				toolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+					title: '提示'
+					,layEvent: 'LAYTABLE_TIPS'
+					,icon: 'layui-icon-tips'
+					}],
+				page: false,
+				//is_checkbox: true,
+			
+				icon: {
+					open: 'layui-icon layui-icon-triangle-d',
+					close: 'layui-icon layui-icon-triangle-r',
+					left: 16,
+				},
+                cols: [[
+                    {type: 'numbers', title: '序号'},
+					{field: '详单编号', title: '组单号',width: 200},
+					{field: '组号', title: '组号',width: 50},
+					{field: '客户姓名', title: '客户姓名'},
+					{field: '生产单号', title: '生产单号',width: 100},
+					{field: '大类', title: '大类'},
+					{field: '型号', title: '型号'},
+					{field: '产品尺寸', title: '产品尺寸'},
+					{field: '数量', title: '数量'},
+					{field: '门做法', title: '门做法'},
+					{field: '树种', title: '树种'},
+					{field: '油漆类型', title: '油漆类型'},
+					{field: '油漆颜色', title: '油漆颜色'},
+					{field: '门玻璃', title: '门玻璃'},
+					{field: '洞口类型', title: '洞口类型'},
+					{field: '门长', title: '门长'},
+					{field: '门宽', title: '门宽'},
+					{field: '门厚', title: '门厚'},
+                    {field: '封边类型', title: '封边类型'},
+                    {field: '合页槽', title: '合页槽'},
+					{field: '详单条码', title: '详单条码'},
+					{field: '机器ID', title: '机器码'},
+					{field: '打印编号', title: '打印编号'}
+                   /* {field: 'pid', title: '操作',width: 120, align:'center',
+                    	templet: function(d){
+                    		if(d.pid==0){
+                    			return '';
+                    		}else{
+                    		return [
+								'<a class="layui-btn layui-btn-xs"  lay-event="edit" href="javascript:void(0)" onclick="editDepartment(\''+ d.id + '\')" >编辑</a>',
+								'&nbsp;&nbsp;<a class="layui-btn layui-btn-danger layui-btn-xs"  lay-event="del" href="javascript:void(0)" onclick="delDepartment(\''+ d.id + '\')" >删除</a>',
+								].join('');;
+							}
+							
+                        }	
+                    },*/
+				]],
+				
+                done: function () {
+                    layer.closeAll('loading');
+				},
+            });
+        };
+
+		//触发button按钮
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#treeTableDetails');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#treeTableDetails');
+        });
+
+        $('#btn-refresh').click(function () {
+           	GetTreeTableData();
+		});
+		//打印
+		$('#btnPrint').on('click',function(){
+		//	location.href="../model/labelPrint.php";
+			window.location.href = '../model/labelPrint.php?id='+$('#branchNo').val()+'&detailsNo='+$('#detailsNo').val()+'&customer='+$('#customer').val()+'&produceNo='+$('#produceNo').val();
+		});
+		
+       /* 
+        function complain(d){//操作中显示的内容
+        	if(d.permissionUrl!=null){
+        		return [
+                        '<a class="operation" lay-event="edit" href="javascript:void(0)" onclick="editDepartment(\''+ d.id + '\')" title="编辑">',
+            	     	'<i class="layui-icon layui-icon-edit"></i></a>',
+            	     	'<a class="operation" lay-event="" href="javascript:void(0)" onclick="delDepartment(\''+ d.id + '\')" title="删除">',
+            	     	'<i class="layui-icon layui-icon-delete" ></i></a>',
+            	     	].join('');
+        	}else{
+        		return '';
+        	}
+        	
+		}
+		*/
+        //监听工具条
+        table.on('tool(treeTableDetails)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+			if(data.permissionName!=null){
+				if (layEvent === 'del') {
+	                layer.msg('删除' + data.id);
+	            } else if (layEvent === 'edit') {
+	                layer.msg('修改' + data.id);
+	            }
+			}
+		});
+    });
+
+
+		</script>
+		</div>
+	</div>
+	</body>
+	</html>
