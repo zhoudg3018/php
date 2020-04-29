@@ -101,6 +101,11 @@ if (! empty ( $_FILES ['file_stu'] ['name'] ))
                   }
                 }
               }
+
+
+             $wz=str_replace("'","''",$wz);
+             $wz=str_replace("‘","''",$wz);
+             $wz=str_replace("’","''",$wz);
               $cmmz=$row_arr[8];
               if(!empty($cmmz)&!empty($row_arr[7])){
                 $cmmz=$cmmz.'/'.$row_arr[7];
@@ -111,7 +116,7 @@ if (! empty ( $_FILES ['file_stu'] ['name'] ))
                $query = "insert into 详单表(订单流水号,订单编号,详单编号,项目名称,位置,产品名称,颜色,开向,尺寸规格,类型,标签颜色)
                 values('$订单流水号',
                 '$订单编号',
-                '$num',
+                $num,
                 '$项目名称',
                 '$wz',
                 '$cmmz',

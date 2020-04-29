@@ -372,3 +372,59 @@
 [Sun Apr 26 10:22:47.455543 2020] [core:notice] [pid 12236:tid 532] AH00094: Command line: 'D:\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/phpstudy_pro/Extensions/Apache2.4.39'
 [Sun Apr 26 10:22:47.465506 2020] [mpm_winnt:notice] [pid 12236:tid 532] AH00418: Parent: Created child process 7332
 [Sun Apr 26 10:22:48.046844 2020] [mpm_winnt:notice] [pid 7332:tid 600] AH00354: Child: Starting 1024 worker threads.
+[Mon Apr 27 13:15:03.760530 2020] [core:warn] [pid 8700:tid 556] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Mon Apr 27 13:15:03.771840 2020] [mpm_winnt:notice] [pid 8700:tid 556] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Mon Apr 27 13:15:03.771840 2020] [mpm_winnt:notice] [pid 8700:tid 556] AH00456: Server built: Mar 27 2019 11:06:20
+[Mon Apr 27 13:15:03.771840 2020] [core:notice] [pid 8700:tid 556] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Mon Apr 27 13:15:03.851845 2020] [mpm_winnt:notice] [pid 8700:tid 556] AH00418: Parent: Created child process 1192
+[Mon Apr 27 13:15:04.958923 2020] [mpm_winnt:notice] [pid 1192:tid 512] AH00354: Child: Starting 1024 worker threads.
+[Tue Apr 28 11:12:29.755829 2020] [core:warn] [pid 17612:tid 568] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Tue Apr 28 11:12:29.761813 2020] [mpm_winnt:notice] [pid 17612:tid 568] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Tue Apr 28 11:12:29.761813 2020] [mpm_winnt:notice] [pid 17612:tid 568] AH00456: Server built: Mar 27 2019 11:06:20
+[Tue Apr 28 11:12:29.761813 2020] [core:notice] [pid 17612:tid 568] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Tue Apr 28 11:12:29.863267 2020] [mpm_winnt:notice] [pid 17612:tid 568] AH00418: Parent: Created child process 19156
+[Tue Apr 28 11:12:30.974299 2020] [mpm_winnt:notice] [pid 19156:tid 568] AH00354: Child: Starting 1024 worker threads.
+[Tue Apr 28 11:12:41.859036 2020] [core:warn] [pid 4184:tid 516] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Tue Apr 28 11:12:41.862020 2020] [mpm_winnt:notice] [pid 4184:tid 516] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Tue Apr 28 11:12:41.862020 2020] [mpm_winnt:notice] [pid 4184:tid 516] AH00456: Server built: Mar 27 2019 11:06:20
+[Tue Apr 28 11:12:41.862020 2020] [core:notice] [pid 4184:tid 516] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Tue Apr 28 11:12:41.869999 2020] [mpm_winnt:notice] [pid 4184:tid 516] AH00418: Parent: Created child process 3268
+[Tue Apr 28 11:12:43.066824 2020] [mpm_winnt:notice] [pid 3268:tid 632] AH00354: Child: Starting 1024 worker threads.
+[Tue Apr 28 11:16:15.625275 2020] [core:warn] [pid 19420:tid 476] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Tue Apr 28 11:16:15.635199 2020] [mpm_winnt:notice] [pid 19420:tid 476] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Tue Apr 28 11:16:15.635199 2020] [mpm_winnt:notice] [pid 19420:tid 476] AH00456: Server built: Mar 27 2019 11:06:20
+[Tue Apr 28 11:16:15.635199 2020] [core:notice] [pid 19420:tid 476] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Tue Apr 28 11:16:15.656171 2020] [mpm_winnt:notice] [pid 19420:tid 476] AH00418: Parent: Created child process 18332
+[Tue Apr 28 11:16:16.709732 2020] [mpm_winnt:notice] [pid 18332:tid 4] AH00354: Child: Starting 1024 worker threads.
+[Tue Apr 28 11:16:21.905282 2020] [core:warn] [pid 568:tid 508] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Tue Apr 28 11:16:21.908273 2020] [mpm_winnt:notice] [pid 568:tid 508] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Tue Apr 28 11:16:21.908273 2020] [mpm_winnt:notice] [pid 568:tid 508] AH00456: Server built: Mar 27 2019 11:06:20
+[Tue Apr 28 11:16:21.908273 2020] [core:notice] [pid 568:tid 508] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Tue Apr 28 11:16:21.921239 2020] [mpm_winnt:notice] [pid 568:tid 508] AH00418: Parent: Created child process 1172
+[Tue Apr 28 11:16:22.974015 2020] [mpm_winnt:notice] [pid 1172:tid 572] AH00354: Child: Starting 1024 worker threads.
+[Tue Apr 28 11:30:58.545800 2020] [mpm_winnt:notice] [pid 568:tid 508] AH00428: Parent: child process 1172 exited with status 1073807364 -- Restarting.
+[Tue Apr 28 11:34:22.467958 2020] [core:warn] [pid 4036:tid 560] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Tue Apr 28 11:34:22.470921 2020] [mpm_winnt:notice] [pid 4036:tid 560] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Tue Apr 28 11:34:22.470921 2020] [mpm_winnt:notice] [pid 4036:tid 560] AH00456: Server built: Mar 27 2019 11:06:20
+[Tue Apr 28 11:34:22.470961 2020] [core:notice] [pid 4036:tid 560] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Tue Apr 28 11:34:22.550962 2020] [mpm_winnt:notice] [pid 4036:tid 560] AH00418: Parent: Created child process 4620
+[Tue Apr 28 11:34:23.606655 2020] [mpm_winnt:notice] [pid 4620:tid 556] AH00354: Child: Starting 1024 worker threads.
+[Tue Apr 28 17:01:31.703804 2020] [mpm_winnt:crit] [pid 4620:tid 556] AH02538: Child: Parent process exited abruptly. Child process is ending
+[Wed Apr 29 07:24:34.975706 2020] [core:warn] [pid 668:tid 156] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Wed Apr 29 07:24:34.985679 2020] [mpm_winnt:notice] [pid 668:tid 156] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Wed Apr 29 07:24:34.985679 2020] [mpm_winnt:notice] [pid 668:tid 156] AH00456: Server built: Mar 27 2019 11:06:20
+[Wed Apr 29 07:24:34.985679 2020] [core:notice] [pid 668:tid 156] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Wed Apr 29 07:24:35.048512 2020] [mpm_winnt:notice] [pid 668:tid 156] AH00418: Parent: Created child process 2924
+[Wed Apr 29 07:24:36.110529 2020] [mpm_winnt:notice] [pid 2924:tid 548] AH00354: Child: Starting 1024 worker threads.
+[Wed Apr 29 08:59:28.604903 2020] [core:warn] [pid 10708:tid 132] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Wed Apr 29 08:59:28.607865 2020] [mpm_winnt:notice] [pid 10708:tid 132] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Wed Apr 29 08:59:28.607865 2020] [mpm_winnt:notice] [pid 10708:tid 132] AH00456: Server built: Mar 27 2019 11:06:20
+[Wed Apr 29 08:59:28.607865 2020] [core:notice] [pid 10708:tid 132] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Wed Apr 29 08:59:28.934235 2020] [mpm_winnt:notice] [pid 10708:tid 132] AH00418: Parent: Created child process 10784
+[Wed Apr 29 08:59:30.080169 2020] [mpm_winnt:notice] [pid 10784:tid 556] AH00354: Child: Starting 1024 worker threads.
+[Wed Apr 29 10:51:42.690444 2020] [core:warn] [pid 3860:tid 572] AH00098: pid file D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39/logs/httpd.pid overwritten -- Unclean shutdown of previous Apache run?
+[Wed Apr 29 10:51:42.693435 2020] [mpm_winnt:notice] [pid 3860:tid 572] AH00455: Apache/2.4.39 (Win64) OpenSSL/1.1.1b mod_fcgid/2.3.9a mod_log_rotate/1.02 configured -- resuming normal operations
+[Wed Apr 29 10:51:42.693435 2020] [mpm_winnt:notice] [pid 3860:tid 572] AH00456: Server built: Mar 27 2019 11:06:20
+[Wed Apr 29 10:51:42.693435 2020] [core:notice] [pid 3860:tid 572] AH00094: Command line: 'D:\\Git\\php\\phpstudy_pro\\COM\\..\\Extensions\\Apache2.4.39\\\\bin\\httpd.exe -d D:/Git/php/phpstudy_pro/Extensions/Apache2.4.39'
+[Wed Apr 29 10:51:42.699448 2020] [mpm_winnt:notice] [pid 3860:tid 572] AH00418: Parent: Created child process 5660
+[Wed Apr 29 10:51:43.810447 2020] [mpm_winnt:notice] [pid 5660:tid 596] AH00354: Child: Starting 1024 worker threads.
