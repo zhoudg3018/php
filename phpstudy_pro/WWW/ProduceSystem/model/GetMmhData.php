@@ -46,7 +46,7 @@ $query = " select c.生产批次号
   join 视图_详单表 b on a.详单编号=b.详单编号
   join 视图_订单表 c on a.订单编号=c.订单编号
   where  b.类别='门' AND c.生产批次号='$branchNo'
-  AND c.产品类型 IN ('免漆门','圣都-免漆') AND 大类 IN ('门','移动门')
+  AND c.产品类型 IN ('免漆门','圣都-免漆') --AND 大类 IN ('门','移动门')
   order by 组号,组序号;";
   $res = $pdosql->query($query);
   $row_arr=array();

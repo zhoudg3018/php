@@ -383,13 +383,17 @@
         echo substr(strval($row2['门长']+10000),1,4).'/'.substr(strval($row2['门宽']+10000),1,4).'/'.substr(strval($row2['门厚']+10000),1,4)
       ?></td>
       <td  Id="fblxCode<?php echo $number ?>"  style="display:none"  > <?php 
-       if('两头'== $row2['封边类型'] ){
-        echo "0001";
-       }else if('四面'== $row2['封边类型']){
-        echo "0000";
-       }else{
-        echo "errer";
-       }
+      if('门'== $row2['大类'] || '移动门'== $row2['大类'] ){
+          if('两头'== $row2['封边类型'] ){
+            echo "0001";
+          }else if('四面'== $row2['封边类型']){
+            echo "0000";
+          }else{
+            echo "errer";
+          }
+      }else{
+        echo "0003";
+      }
       ?></td>
        <td  Id="qglxCode<?php echo $number ?>"  style="display:none"  > <?php 
        if('两头'== $row2['封边类型'] ){

@@ -100,7 +100,7 @@
 		<script type="text/javascript">
 
 	layui.config({
-        base: '../static/modules/'
+        base: '../static/modules/opTable'
     }).extend({
 	   // treetable: 'treetable-lay/treetable'
 	   opTable: '/opTable'
@@ -156,14 +156,17 @@
 			});
 			//根据批次号获取数据
 			$('#btn-improt').click(function () {
+				layer.load(1);
 				$.ajax({
 						url:'../model/GetMmhData.php',
 						data:{'branchNo':$('#branchNo').val()},
 						type:"GET",
 						dataType:"JSON",
 						success:function(data){
+							layer.closeAll('loading');
 							if(data.msg=='OK'){
-								GetTreeTableData();
+								
+								GetTableData();
 								layer.msg('数据引入成功!');
 							}else{
 								layer.msg(data.msg);
@@ -171,26 +174,28 @@
 					
 						},
 						error:function(data){
-							//layer.alert("435");
-							///$.messager.alert('错误',data);
+							layer.closeAll('loading');
 							layer.msg("GetMmhData.php错误");
 						}
 					});
 		
 			});
-			//根据批次号获取数据
+			//根据批次号删除
 			$('#btnDel').click(function () {
+				layer.load(1);
 				$.ajax({
 						url:'../model/orderGroups.php',
 						data:{'branchNo':$('#branchNo').val(),'type':"DELETE"},
 						type:"GET",
 						dataType:"JSON",
 						success:function(data){
-							renderTable(data.data);
+								layer.closeAll('loading');
 							layer.msg('该批次号的详单被删除'+data.count+'条数据');
+							opTable(data.data);
 						},
 						error:function(data){
-							//layer.alert("435");
+
+							layer.closeAll('loading');
 							$.messager.alert('错误',data.msg);
 						}
 					});
