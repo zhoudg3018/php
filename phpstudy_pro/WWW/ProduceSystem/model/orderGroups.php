@@ -33,7 +33,7 @@
 
     $query = '	SELECT * FROM 组单表视图 T
                 WHERE 1=1 '.$query_str.'
-                ORDER BY T.序号, T.详单编号  ASC ';
+                ORDER BY T.生产单号, T.详单编号  ASC ';
         $res = $pdo->prepare($query);
         $res->execute();
         $count=$res->rowCount();
@@ -54,7 +54,7 @@
 
         $query = '	SELECT * FROM 详单表视图 T
                     WHERE 1=1 '.$query_str.'
-                    ORDER BY T.序号, T.详单编号  ASC ';
+                    ORDER BY T.生产单号, T.详单编号  ASC ';
             $res = $pdo->prepare($query);
             $res->execute();
             $count=$res->rowCount();
