@@ -1,5 +1,5 @@
 <?php
-include "./pdo_config.php";
+include "../conn/pdo_config.php";
 $pid = empty($_POST['id'] ) ? null : $_POST['id']; // 前端发来的请求，表明了现在要请求哪一个节点的孩子，请求根节点时，这个参数为空
 $arrParams = array();
 if( empty( $pid ))

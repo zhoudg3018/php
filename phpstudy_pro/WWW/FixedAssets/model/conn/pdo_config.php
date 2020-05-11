@@ -8,21 +8,15 @@ $dbpassword="000000";
 $dsn = "pgsql:$host;port=$port;dbname=$dbname";
  
 try{
-if(empty($pdo)){
-    // create a PostgreSQL database connection
-    $pdo = new PDO($dsn, $username, $dbpassword, array(
-        PDO::ATTR_PERSISTENT => true
-    ));
+    if(empty($pdo)){
+        // create a PostgreSQL database connection
+        $pdo = new PDO($dsn, $username, $dbpassword, array(
+            PDO::ATTR_PERSISTENT => true
+        ));
 
-    $pdo -> exec('set names utf-8');//设置输出编码集
-}
- // display a message if connected to the PostgreSQL successfully
- if($pdo){
- //echo "Connected to the <strong>$dbname</strong> database successfully!";
- }
+     //   $pdo -> exec('set names utf-8');//设置输出编码集
+    }
 }catch (PDOException $e){
- // report error message
- //echo $e->getMessage();
  die("error:".$e->getMessage());
 }
 ?>

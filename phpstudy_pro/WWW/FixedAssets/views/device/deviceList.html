@@ -24,13 +24,13 @@
 		  </div>
 		</br>
 			<div class="layui-fluid">
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名称:
-			<div class="layui-inline">
-			  <input class="layui-input" name="名称" id="名称" autocomplete="off">
-			</div>
-			设备编号:
+			&nbsp;&nbsp;&nbsp;&nbsp;设备编号:&nbsp;&nbsp;&nbsp;&nbsp;
 			<div class="layui-inline">
 			  <input class="layui-input" name="设备编号" id="设备编号" autocomplete="off">
+			</div>
+			&nbsp;&nbsp;&nbsp;名称:&nbsp;&nbsp;&nbsp;&nbsp;
+			<div class="layui-inline">
+			  <input class="layui-input" name="名称" id="名称" autocomplete="off">
 			</div>
 			<button class="layui-btn" data-type="reload">搜索</button>
 		  </div>
@@ -38,8 +38,8 @@
 		  <div class="layui-form-item">
 			<label class="layui-form-label"  style="text-align: center;">大类</label>
 			<div class="layui-input-block" style="width: 50%;"id="tag_ids2">
-			  </div>
-			  <div>
+		</div>
+		<div>
 		<div class="layui-card">
 			<div class="layui-card-body layui-text">
 				<div id="toolbar">
@@ -305,6 +305,7 @@
 									data : data
 								});
 							}
+							layer.msg(msg);
 						 }
 					//document.getElementById("jsonResult").innerHTML = JSON.stringify(DataArr, null, 2);	//使用JSON.stringify() 格式化输出JSON字符串	
 					/*	$.ajax({
