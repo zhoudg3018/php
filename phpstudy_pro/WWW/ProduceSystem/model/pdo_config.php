@@ -2,7 +2,7 @@
 header("Content-Type:text/html;charset=utf-8");
 $host    = "host=localhost";
 $port    = "5432";
-$dbname   = "Test";
+$dbname   = "Productionprinting";
 $username = "postgres";
 $dbpassword="000000";
 $dsn = "pgsql:$host;port=$port;dbname=$dbname";

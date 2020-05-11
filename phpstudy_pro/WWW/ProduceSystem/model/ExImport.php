@@ -72,7 +72,7 @@ function insertToPG($exfn,$branchNo){
   try{
     $host    = "host=localhost";
     $port    = "5432";
-    $dbname   = "Test";
+    $dbname   = "Productionprinting";
     $username = "postgres";
     $dbpassword="000000";
     $dsn = "pgsql:$host;port=$port;dbname=$dbname";

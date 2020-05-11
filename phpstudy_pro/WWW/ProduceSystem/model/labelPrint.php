@@ -46,7 +46,7 @@
     /** 筛选数据 **/
     $query = "select * from 详单表
     where 1=1".$query_str."
-    order by 序号,详单编号 ASC limit {$d_page} offset {$s_page} ";
+    order by 生产单号,详单编号 ASC limit {$d_page} offset {$s_page} ";
     $res2 = $pdo->prepare($query);
     $res2->execute();
     ?>
