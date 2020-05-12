@@ -1,0 +1,376 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+    <meta name="renderer" content="webkit" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>设备资产维修记录</title>
+    <link rel="stylesheet" href="../../static/layui/css/layui.css" />
+	
+</head>
+<body >
+	<div >
+		 <div class="layui-fluid">
+			<label class="layui-btn ">设备资产维修记录表</label>
+		  </div>
+		</br>
+			<div class="layui-fluid">
+			&nbsp;&nbsp;&nbsp;&nbsp;设备编号:&nbsp;&nbsp;&nbsp;&nbsp;
+			<div class="layui-inline">
+			  <input class="layui-input" name="设备编号" id="设备编号" autocomplete="off">
+			</div>
+			&nbsp;&nbsp;&nbsp;维修单位负责人:&nbsp;&nbsp;&nbsp;&nbsp;
+			<div class="layui-inline">
+			  <input class="layui-input" name="维修单位负责人" id="维修单位负责人" autocomplete="off">
+			</div>
+			<button class="layui-btn" data-type="reload">搜索</button>
+		  </div>
+		  <br>
+		<div>
+		<div class="layui-card">
+			<div class="layui-card-body layui-text">
+				<div id="toolbar">
+					<div class="layui-inline">
+						<div class="layui-upload">
+							<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
+							<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
+						  </div>
+					</div>
+					<br>
+					<div >
+						<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
+							<i class="layui-icon layui-icon-add-1"></i> 添加一行
+						</button>
+					</div>
+					
+				</div>
+				<div id="tableRes" class="table-overlay">
+					<table id="dataTable" lay-filter="dataTable" class="layui-hide"></table>
+				</div>
+				<div id="action" class="text-center">
+					<button type="button" name="btnSave" class="layui-btn" data-type="save"><i class="layui-icon layui-icon-ok-circle"></i>保存</button>				
+					<button type="button" name="btnReset" class="layui-btn layui-btn-primary" data-type="reset">取消</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--recommended script position-->
+	<script src="../../static/layui/layui.js" charset="utf-8"></script>
+	<script type="text/javascript">
+	//layui 模块化引用
+		layui.use(['jquery', 'table', 'layer','laydate','upload'], function(){
+			var $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
+			var laydate = layui.laydate;
+			var upload = layui.upload;
+			//获取基础数据
+			var result='';
+			function GetAndUpateData(type,id,DataArr) {
+		
+					$.ajax({
+						url:'../../model/device/deviceFixList.php',
+								type:"post",
+								dataType:"JSON",
+								data:{'type':type,
+									  'id':id,
+									  'data':DataArr,
+									  'name':$('#维修单位负责人').val(),
+									  'sbbh':$('#设备编号').val()
+									},
+						async:false, 
+						success: (data) => {
+							switch (type){
+								case 'SELECT_TB':
+										result=data.data;
+										break;
+								case 'UPIN': 
+								case 'DELETE':
+								default:
+									result=data.msg;
+									break;
+
+							}
+						},
+						error:function(data){
+							$.messager.alert('错误',data.msg);
+						}
+					})
+			
+				return result;
+			};
+			var tbData=GetAndUpateData('SELECT_TB','','');
+	
+			//数据表格实例化			
+            var tbWidth = $("#tableRes").width();
+			var layTableId = "layTable";
+			var tableIns = table.render({
+				elem: '#dataTable',
+				id: layTableId,
+				data: tbData,
+				limit: 1000,
+				lineheight: 40,
+				loading: true,
+				even: false, //不开启隔行背景
+				cols: [[
+					{title: '序号', type: 'numbers',width:60, align: 'center'},
+					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
+					{field: '维修单位', title: '维修单位',width:90,align: 'center', event: '维修单位',edit: 'text'},
+					{field: '维修内容', title: '维修内容', width:90,align: 'center', event: '维修内容',edit: 'text'},
+					{field: '维修时间', title: '维修时间',width:90, align: 'center', event: '维修时间',edit: 'text'},
+					{field: '维修费用', title: '维修费用', width:90,align: 'center', event: '维修费用',edit: 'text'},
+					{field: '维修单位负责人', title: '维修单位负责人',width:120,align: 'center',  event: '维修单位负责人',edit: 'text'},
+					{field: '记录人', title: '记录人', width:90,event: '记录人',edit: 'text'},
+					{field: '记录时间', title: '记录时间',width:150,align: 'center', event: '记录时间',templet:"<div>{{layui.util.toDateString(d.记录时间, 'yyyy-MM-dd HH:mm:ss')}}</div> "},
+					{field: '备注', title: '备注',width:200,align: 'center', event: '备注',edit: 'text'},
+					{field: '规定使用年限', title: '规定使用年限',width:120,align: 'center', event: '规定使用年限',edit: 'text'},
+					{field: '备注', title: '备注',width:60,align: 'center', event: '备注',edit: 'text'},
+					{field: '购买部件名称', title: '购买部件名称',width:120,align: 'center', event: '购买部件名称',edit: 'text'},
+					{field: '购买价格', title: '购买价格',width:90,align: 'center', event: '购买价格',edit: 'text'},
+					{field: '购买部件价格', title: '购买部件价格',width:90,align: 'center', event: '购买部件价格',edit: 'text'},
+					{field: '报修人员', title: '报修人员',width:90,align: 'center', event: '报修人员',edit: 'text'},
+					{field: '维修人员', title: '维修人员',width:90,align: 'center', event: '维修人员',edit: 'text'},
+					{field: '设备保养方法', title: '设备保养方法',width:120,align: 'center', event: '设备保养方法',edit: 'text'},
+					{field: '保养日期', title: '保养日期',width:90,align: 'center', event: '保养日期',edit: 'text'},
+					{field: '保养人员', title: '保养人员',width:90,align: 'center', event: '保养人员',edit: 'text'},
+					{field: '使用日期', title: '使用日期', width:90,align: 'center',event: '使用日期',edit: 'text'},		
+					{field: 'id', title: '操作',width:90,align: 'center', templet: function(d){
+						return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="'+ d.id +'"><i class="layui-icon layui-icon-delete"></i>移除</a>';
+					}},
+				]],
+				done: function(res, curr, count){
+					$("[data-field='flg']").css('display','none'); //关键代码
+					tbData = res.data;
+				}
+			});
+			//选完文件后不自动上传
+			var upload = upload.render({
+				elem: '#upload-change'
+				,url: '../../model/upload/excelUpload.php' //改成您自己的上传接口
+				,auto: false
+				,accept: 'file' //普通文件
+				,exts: 'xls|excel|xlsx'
+				//,multiple: true
+				,dataType:'JSON'
+				,bindAction: '#upload-change-action'
+				,before: function(input){    
+					var data = {};    
+					data.field = "设备编号,维修单位,维修内容,维修时间,维修费用,维修单位负责人,联系电话,记录人,记录时间,备注,"
+					+"购买部件名称,购买部件价格,报修人员,维修人员,设备保养方法,保养日期,保养人员";
+					this.data=data;  
+					}  
+				,done: function(res){
+					layer.msg(res.msg);
+					if(res.msg=='上传成功'){
+						var oldData = table.cache[layTableId];
+						console.log(oldData);
+						var newRow;
+						for(var i=0; i< res.data.length;i++){
+							var data=res.data[i];
+							newRow = {id: new Date().valueOf(), 
+							设备编号:data['设备编号'],
+							维修单位:data['维修单位'],
+							维修内容:data['维修内容'],
+							维修时间:data['维修时间'],
+							维修费用:data['维修费用'],
+							维修单位负责人:data['维修单位负责人'],
+							联系电话:data['联系电话'],
+							记录人:data['记录人'],
+							记录时间:data['记录时间'],
+							备注:data['备注'],
+							购买部件名称:data['购买部件名称'],
+							购买部件价格:data['购买部件价格'],
+							报修人员:data['报修人员'],
+							维修人员:data['维修人员'],
+							设备保养方法:data['设备保养方法'],
+							保养日期:data['保养日期'],
+							保养人员:data['保养人员'],
+							flg:'insert'};
+							oldData.push(newRow);
+						}
+						tableIns.reload({
+							data : oldData
+						});
+					}
+				}
+
+			});
+		
+			//定义事件集合
+			var active = {
+
+				addRow: function(){	//添加一行
+					var oldData = table.cache[layTableId];
+					console.log(oldData);
+					var newRow = {id: new Date().valueOf(), 
+									设备编号:null,
+									维修单位:null,
+									维修内容:null,
+									维修时间:null,
+									维修费用:null,
+									维修单位负责人:null,
+									联系电话:null,
+									记录人:null,
+									记录时间:new Date(),
+									备注:null,
+									购买部件名称:null,
+									购买部件价格:null,
+									报修人员:null,
+									维修人员:null,
+									设备保养方法:null,
+									保养日期:null,
+									保养人员:null,
+									flg:'insert'};
+					oldData.push(newRow);
+					tableIns.reload({
+						data : oldData
+					});
+				},
+				updateRow: function(obj){
+					var oldData = table.cache[layTableId];				
+					console.log(oldData);
+					for(var i=0, row; i < oldData.length; i++){
+						row = oldData[i];
+						if(row.id == obj.id){
+							if(row.flg !='insert'){
+								obj.flg='edit';
+							}
+							$.extend(oldData[i], obj);
+							return;
+						}
+					}
+					tableIns.reload({
+						data : oldData
+					});
+				},
+				removeEmptyTableCache: function(){
+					var oldData = table.cache[layTableId];		
+					for(var i=0, row; i < oldData.length; i++){
+						row = oldData[i];
+						if(!row || !row.id){
+							oldData.splice(i, 1);    //删除一项
+						}
+						continue;
+					}
+					tableIns.reload({
+						data : oldData
+					});
+				},
+				save: function(){
+					var oldData = table.cache[layTableId];
+					var DataArr=[];	
+					console.log(oldData);	
+					for(var i=0, row; i < oldData.length; i++){
+						row = oldData[i];
+						if(row.flg=='insert'|| row.flg=='edit'){
+							DataArr.push(row);
+						}
+					}
+				
+					if(DataArr.length != 0){
+						if(DataArr.length>1000){
+							layer.msg('修改行数最大：1000！');
+							return;
+						}
+						var msg =GetAndUpateData('UPIN','',DataArr);
+						if(msg='保存成功'){
+							var data =GetAndUpateData('SELECT_TB','','');
+							if(data !=null){
+								tableIns.reload({
+									data : data
+								});
+							}
+							layer.msg(msg);
+						 }
+					}else{
+						layer.msg('无数据修改');
+					}
+				},
+				reset: function(){
+					tableIns.reload({
+					data : GetAndUpateData('SELECT_TB','',''),
+					});
+				},
+				reload: function(){
+						var data =GetAndUpateData('SELECT_TB','','');
+						if(data !=null){
+							tableIns.reload({
+								data : data
+							});
+						 }
+
+				}
+			}
+			
+			//激活事件
+            var activeByType = function (type, arg) {
+				if(arguments.length === 2){					
+					active[type] ? active[type].call(this, arg) : '';
+				}else{
+					active[type] ? active[type].call(this) : '';
+				}
+            }
+			
+            //注册按钮事件
+            $('.layui-btn[data-type]').on('click', function () {
+                var type = $(this).data('type');
+                activeByType(type);
+            });
+
+			 //监听工具条
+            table.on('tool(dataTable)', function (obj) {
+                var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
+				console.log(data);
+                switch(event){
+					case "维修时间":
+					case "保养日期":
+							var field = $(this).data('field');
+							laydate.render({
+								elem: this.firstChild
+								, show: true //直接显示
+								, closeStop: this
+								, done: function (value, date) {
+									data[field] = value;
+									activeByType('updateRow', obj.data);
+								}
+							});
+							break;
+					case "设备编号":
+					case "维修单位":
+					case "维修内容":
+					case "维修费用":
+					case "维修单位负责人":
+					case "联系电话":
+					case "记录人":
+					case "备注":
+					case "购买部件名称":
+					case "购买部件价格":
+					case "报修人员":
+					case "维修人员":
+					case "设备保养方法":
+					case "保养人员":
+						var nameVal = tr.find("td[data-field='"+event+"'] div").text();
+						$.extend(obj.data, {event: nameVal})	
+						activeByType('updateRow', obj.data);	//更新行记录对象
+						break;	
+					case "del":
+						layer.confirm('真的删除行么？', function(index){
+
+							var msg=GetAndUpateData('DELETE',obj.data.id,'');
+							if(msg =='删除成功'|| obj.data.flg=='insert'){
+							obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+							layer.close(index);
+							activeByType('removeEmptyTableCache');
+						  }else{
+							  layer.alert(msg);
+						  }
+						});
+						break;						
+				}
+            });
+		});
+	</script>
+</body>
+</html>

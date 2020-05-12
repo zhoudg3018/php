@@ -46,25 +46,29 @@
 //JavaScript代码区域
 layui.extend({
             hxNav: '../static/modules/hxNav'  // 根据你自己的目录设置
-        }).use(['element','hxNav','jquery'],function(){
+        }).use(['element','hxNav','jquery','layer'],function(){
           var element = layui.element;
+          var layer = layui.layer;
           var $ = layui.$;
+        
           $(document).ready(function(){
               $("dd>a").click(function (e) {
                     e.preventDefault();
                     $("#iframeMain").attr("src",$(this).attr("href"));
                 });
             });
+            var loading=layer.load(1);
             layui.hxNav({
                 element: '#hxNavbar',        // 必须，指定ID
                 url: '../model/menu/getMenuNavbar.php',  // 请求后台数据的接口
                 type: 'post',
                 shrink: false,
                 onSelect: function(v) {
-                    console.log(v);
+                  console.log(v);
                   //  layui.hxNav('select', id );
                 }
             });
+            layer.close(loading);
         });
 </script>
 </body>

@@ -19,10 +19,11 @@
 		.table-overlay .layui-table-cell{height: auto; overflow: visible;}
 	</style>
 	<div >
+
 		 <div class="layui-fluid">
 			<label class="layui-btn ">设备资产表</label>
 		  </div>
-		</br>
+			</br>
 			<div class="layui-fluid">
 			&nbsp;&nbsp;&nbsp;&nbsp;设备编号:&nbsp;&nbsp;&nbsp;&nbsp;
 			<div class="layui-inline">
@@ -38,16 +39,26 @@
 		  <div class="layui-form-item">
 			<label class="layui-form-label"  style="text-align: center;">大类</label>
 			<div class="layui-input-block" style="width: 50%;"id="tag_ids2">
-		</div>
+			</div>
 		<div>
+			 
+
 		<div class="layui-card">
 			<div class="layui-card-body layui-text">
 				<div id="toolbar">
-					<div>
-						<button type="button" class="layui-btn layui-btn-sm" data-type="addRow" title="添加一行">
-							<i class="layui-icon layui-icon-add-1"></i> 添加一行
-						</button>					
+					<div class="layui-inline">
+						<div class="layui-upload">
+							<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
+							<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
+						  </div>
 					</div>
+					<br>
+					<div >
+						<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
+							<i class="layui-icon layui-icon-add-1"></i> 添加一行
+						</button>
+					</div>
+					
 				</div>
 				<div id="tableRes" class="table-overlay">
 					<table id="dataTable" lay-filter="dataTable" class="layui-hide"></table>
@@ -64,10 +75,12 @@
 	<script src="../../static/modules/selectM.js" charset="utf-8"></script>
 	<script type="text/javascript">
 	//layui 模块化引用
-		layui.use(['jquery', 'table', 'layer','selectM','laydate'], function(){
+		layui.use(['jquery', 'table', 'layer','selectM','laydate','upload'], function(){
 			var $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
 			var selectM = layui.selectM;
 			var laydate = layui.laydate;
+			var upload = layui.upload;
+			
 			//获取基础数据
 			var result='';
 			function GetAndUpateData(type,id,DataArr,bigType) {
@@ -84,6 +97,7 @@
 									},
 						async:false, 
 						success: (data) => {
+						
 							switch (type){
 								case 'SELECT_TY':
 								case 'SELECT_TB':
@@ -96,8 +110,10 @@
 									break;
 
 							}
+						
 						},
 						error:function(data){
+						
 							$.messager.alert('错误',data.msg);
 						}
 					})
@@ -150,6 +166,8 @@
 				return html.join('');
 			}
 		};
+
+	
 
 		
 			//数据表格实例化			
@@ -208,10 +226,70 @@
 					viewObj.tbData = res.data;
 				}
 			});
+
+			//选完文件后不自动上传
+			var upload = upload.render({
+				elem: '#upload-change'
+				,url: '../../model/upload/excelUpload.php' //改成您自己的上传接口
+				,auto: false
+				,accept: 'file' //普通文件
+				,exts: 'xls|excel|xlsx'
+				//,multiple: true
+				,dataType:'JSON'
+				,bindAction: '#upload-change-action'
+				,before: function(input){    
+					var data = {};    
+					data.field = "设备编号,大类,名称,规格,单位,数量,金额,出厂时间,生产厂家,购置时间,规定使用年限,备注,记录人,记录时间,"
+					+"购买价格,设备负责人,使用状态,机器原值,机器净值,使用部门,品牌,生产能力,使用日期,固定资产转移单,附件";
+					this.data=data;  
+					}  
+				,done: function(res){
+					layer.msg(res.msg);
+					if(res.msg=='上传成功'){
+						var oldData = table.cache[layTableId];
+						console.log(oldData);
+						var newRow;
+						for(var i=0; i< res.data.length;i++){
+							var data=res.data[i];
+							newRow = {id: new Date().valueOf(), 
+							设备编号:data['设备编号'],
+							大类:data['大类'],
+							名称:data['名称'],
+							规格:data['规格'],
+							单位:data['单位'],
+							数量:data['数量'],
+							金额:data['金额'],
+							出厂时间:data['出厂时间'],
+							生产厂家:data['生产厂家'],
+							购置时间:data['购置时间'],
+							规定使用年限:data['规定使用年限'],
+							备注:data['备注'],
+							记录人:data['记录人'],
+							记录时间:data['记录时间'],
+							购买价格:data['购买价格'],
+							设备负责人:data['设备负责人'],
+							机器原值:data['机器原值'],
+							机器净值:data['机器净值'],
+							使用部门:data['使用部门'],
+							品牌:data['品牌'],
+							生产能力:data['生产能力'],
+							使用日期:data['使用日期'],
+							固定资产转移单:data['固定资产转移单'],
+							附件:data['附件'],
+							使用状态: 0,
+							flg:'insert'};
+							oldData.push(newRow);
+						}
+						tableIns.reload({
+							data : oldData
+						});
+					}
+				}
+
+			});
 		
 			//定义事件集合
 			var active = {
-
 				addRow: function(){	//添加一行
 					var oldData = table.cache[layTableId];
 					console.log(oldData);
@@ -307,28 +385,6 @@
 							}
 							layer.msg(msg);
 						 }
-					//document.getElementById("jsonResult").innerHTML = JSON.stringify(DataArr, null, 2);	//使用JSON.stringify() 格式化输出JSON字符串	
-					/*	$.ajax({
-							url:'../../model/device/deviceList.php',
-									type:"post",
-									dataType:"JSON",
-									data:{'type':'UPIN',
-										 'data':DataArr
-										},
-							
-							success: (data) => {
-								
-								layer.msg(data.msg);
-								if(data.msg='保存成功'){
-									reload();
-								}
-							},
-							error:function(data){
-								//layer.alert("435");
-								$.messager.alert('错误',data.msg);
-							}
-						})
-						*/
 					}else{
 						layer.msg('无数据修改');
 					}
@@ -339,30 +395,6 @@
 					});
 				},
 				reload: function(){
-					/*$.ajax({
-							url:'../../model/device/deviceList.php',
-									type:"post",
-									dataType:"JSON",
-									data:{'type':'SELECT_W',
-										 'name':$('#名称').val(),
-										 'sbbh':$('#设备编号').val(),
-										 'bigType':tagIns2.values
-										},
-							success: (data) => {
-								
-								layer.msg(data.msg);
-								if(data.msg='OK'){
-									tableIns.reload({
-									data : data.data
-									});
-								}
-							},
-							error:function(data){
-								//layer.alert("435");
-								$.messager.alert('错误',data.msg);
-							}
-						})
-						*/
 						var data =GetAndUpateData('SELECT_TB','','',tagIns2.values);
 						if(data !=null){
 							tableIns.reload({
@@ -371,6 +403,7 @@
 						 }
 
 				}
+					
 			}
 			
 			//激活事件
@@ -471,7 +504,7 @@
 						});
 						break;						
 				}
-            });
+			});
 		});
 	</script>
 </body>
