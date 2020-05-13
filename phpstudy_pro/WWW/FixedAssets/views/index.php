@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -13,18 +14,16 @@
     <div class="layui-logo">开洋木业</div>
     <ul class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
-        <a href="javascript:;">       
-          <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-          <?php
-           
-          ?>
+        <a href="javascript:;" id="admin_user">       
+         <img src="http://t.cn/RCzsdCq" id class="layui-nav-img">
+          
         </a>
         <dl class="layui-nav-child">
            <!-- <dd><a href="./view/user/info.html" target="iframeMain" >基本资料</a></dd> -->
             <dd><a href="./view/user/password.html" target="iframeMain" >修改密码</a></dd>
         </dl>
       </li>
-      <li layadmin-event="logout"  class="layui-nav-item"><a href="./user/login.html">退出</a></li>
+      <li layadmin-event="logout"  class="layui-nav-item"><a id="Esc" >退出</a></li>
     </ul>
   </div>
   <div id="hxNavbar"></div>
@@ -50,7 +49,19 @@ layui.extend({
           var element = layui.element;
           var layer = layui.layer;
           var $ = layui.$;
-        
+          
+         $(function () {
+          if(window.sessionStorage.getItem("admin")===null){
+                window.location.href="./user/login.html";
+              }
+              var username= window.sessionStorage.getItem('admin');
+                $("#admin_user").html(username);
+                $("#Esc").on("click",function(){
+                  window.sessionStorage.clear();
+                  window.location.href="./user/login.html";
+                });
+          });
+
           $(document).ready(function(){
               $("dd>a").click(function (e) {
                     e.preventDefault();

@@ -21,7 +21,7 @@
       <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
         <div class="layui-form-item">
           <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
-          <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" placeholder="用户名" class="layui-input">
+          <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" placeholder="用户编号" class="layui-input">
         </div>
         <div class="layui-form-item">
           <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
@@ -89,14 +89,13 @@
         ,done: function(res){
           if(res.msg=='登入成功'){
             //请求成功后，写入 access_token
-            layui.data(setter.tableName, {
+            layui.sessionData(setter.tableName, {
               key: setter.request.tokenName
               ,value: res.access_token
             });
-            sessionStorage.setItem('admin',JSON.stringify(res.data.username));
+            window.sessionStorage.setItem('admin',res.data[0]['用户编号']);
             //获取用户数据，并存储在本地。
-            sessionStorage.setItem('role',JSON.stringify(res.data.role));
-            sessionStorage.setItem('avatar',JSON.stringify(res.data.avatar));
+            window.sessionStorage.setItem('role',res.data[0]['用户类别']);
 
             //登入成功的提示与跳转
               layer.msg('登入成功', {
@@ -104,9 +103,7 @@
                 ,icon: 1
                 ,time: 1000
               }, function(){
-             location.href = '../index.php'; //后台主页
-            //var localTest = layui.data(setter.tableName);
-           //console.log(localTest.nickname); //获得“ABC”
+                 location.href = '../index.php'; //后台主页
               });
           }else{
             layer.msg(res.msg, {
