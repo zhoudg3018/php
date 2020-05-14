@@ -29,9 +29,6 @@
   <div id="hxNavbar"></div>
   <div class="layui-body">
   <iframe id="iframeMain" name="iframeMain" src="./device/deviceList.html"  style="width: 100%"; height="100%";></iframe>
-    <script>
-    
-    </script>
   </div>
   
   <div class="layui-footer">
@@ -40,7 +37,9 @@
   </div>
 </div>
 <script src="../static/layui/layui.js"></script>
-<script src="../static/modules/hxNav.js"></script>  
+<script src="../static/modules/hxNav.js"></script> 
+<script src="../static/modules/jquery.js"></script>
+<script src="../static/modules/check_token.js"></script>
 <script>
 //JavaScript代码区域
 layui.extend({

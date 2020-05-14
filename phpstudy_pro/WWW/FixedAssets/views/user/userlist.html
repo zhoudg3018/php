@@ -60,19 +60,20 @@
     </div>
   </div>
 
-  <script src="../../static/layui/layui.all.js"></script>   
+  <script src="../../static/layui/layui.all.js"></script>
   <script>
   layui.config({
     base: '../../static/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index','table','user','form','jquery'], function(){
+  }).use(['index','table','user','form','jquery','layer'], function(){
     var $ = layui.$
     ,form = layui.form
     ,admin = layui.admin
     ,table = layui.table;
+    var layer=layui.layer;
 
-    table.render({
+    var userTable=table.render({
         elem: "#LAY-user-manage",
         url: '../../model/user/userlist.php',
        /* page: {//开启分页
@@ -80,6 +81,7 @@
           ,first: '首页'
           ,last:'尾页'
         },*/
+        page:false,
         method:'post',
         cols: [[{ type: "checkbox", fixed: "left" },
         { field: "用户编号", minWidth:120, title: "用户编号", sort: !0 },
@@ -89,6 +91,7 @@
         { title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
         ]],
         where : {
+               token:layui.sessionData(layui.setter.tableName)['token'],
                type : 'SELECT_TB',
           } ,
      
@@ -134,47 +137,61 @@
         
       }
       ,add: function(){
-        layer.open({
-          type: 2
-          ,title: '添加用户'
-          ,content: './userform.html'
-          ,maxmin: true
-          ,area: ['500px', '450px']
-          ,success: function(layero,index) {
-                   parent.form.render();
-          },
-          end: function () {  //刷新页面
-                    location.reload();
-          }
-        }); 
+        layerOpen('添加信息','./userform.html','INSERT_E','更新成功');
       }
     };
     table.on('tool(LAY-user-manage)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
     var data = obj.data //获得当前行数据
     ,layEvent = obj.event; //获得 lay-event 对应的值
     if( layEvent === 'edit'){
-           layer.open({
+         layerOpen('修改信息','./EditUser.html?id='+data.用户编号,'UPDATE_E','更新成功');
+        }
+    });  
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    function layerOpen(title,url,type,msg){
+        layer.open({
                 type: 2,
                 title: '修改信息',
                 fixed: false,
                 maxmin: true,
                 area: ['500px','450px'],
                 shadeClose: true,
-                content:'../../model/EditUser.php?id='+data.用户名,
-                success: function(layero,index) {
-                   parent.form.render();
-               },
+                content:url,
+                btn: ['确定','取消'],
+                yes: function(index, layero){
+                  $.ajax({
+                      url: '../../model/user/userlist.php',
+                      data: {
+                              'type':type,
+                              'username':$(layero).find('iframe')[0].contentWindow.username.value,
+                              'name':$(layero).find('iframe')[0].contentWindow.u_name.value,
+                              'role':$(layero).find('iframe')[0].contentWindow.role.value,
+                              'password':$(layero).find('iframe')[0].contentWindow.password.value
+                              },
+                      method:'post',
+                      dataType:'json',
+                      success:function(data){
+                           layer.msg(data.msg);
+                          if(data.msg=msg) {
+                            layer.close(index);
+                          }  
+                     
+                        },
+                          error:function(data){
+                              $.messager.alert('错误',data.msg);
+                        }
+                    });
+              
+                },
                end: function () {  //刷新页面
-                    location.reload();
+                   location.reload();
                 }
 
             });
-        }
-    });    
-    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
-      var type = $(this).data('type');
-      active[type] ? active[type].call(this) : '';
-    });
+      }
   });
   </script>
 </body>

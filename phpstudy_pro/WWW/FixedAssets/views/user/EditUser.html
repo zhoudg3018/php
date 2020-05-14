@@ -15,7 +15,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">用户编号</label>
       <div class="layui-input-inline">
-        <input type="text" name="username" id="username"  lay-verify="required"  placeholder="请输入" autocomplete="off" class="layui-input">
+        <input type="text" name="username" id="username"  readyonly="true" lay-verify="required" readonly="true" placeholder=""  autocomplete="off" class="layui-input">
       </div>
     </div>
     <div class="layui-form-item">
@@ -38,8 +38,8 @@
     </div>
   </div>
 <!--</from>-->
-  <script src="../../static/layui/layui.js" ></script>
-  <script>
+  <script src="../../static/layui/layui.js" ></script>  
+<script>
     layui.config({
     base: '../../static/' //静态资源所在路径
   }).extend({
@@ -47,7 +47,37 @@
   }).use(['index','user','form','jquery','layer'], function(){
   var layer = layui.layer //弹层
   var $ = layui.$;
-
+  // 修改后保存
+  $( function () {
+     function GetQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r != null){
+        //解决中文乱码
+        return decodeURI(r[2]);
+        }
+        return null;
+       }
+       $.ajax({
+          url: '../../model/user/userlist.php',
+          data: {'username':GetQueryString('id'),'type':'SELECT_E'},
+          method:'post',
+          dataType:'json',
+          success:function(data){
+            if(data.msg='OK'){
+              $("#username").val(data.data[0]['用户编号']);
+              $("#u_name").val(data.data[0]['姓名']);
+              $("#role").val(data.data[0]['用户类别']);
+              $("#password").val(data.data[0]['密码']);
+            }else{
+              layer.msg('数据获取失败');
+            }
+            },
+              error:function(data){
+                  $.messager.alert('错误',data.msg);
+            }
+        });
+  });
 });
 </script>
 </body>
