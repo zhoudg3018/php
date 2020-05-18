@@ -27,8 +27,8 @@
     </ul>
   </div>
   <div id="hxNavbar"></div>
-  <div class="layui-body">
-  <iframe id="iframeMain" name="iframeMain" src="./device/deviceList.html"  style="width: 100%"; height="100%";></iframe>
+  <div class="layui-body" >
+  <iframe id="iframeMain" name="iframeMain" src="./device/deviceList.html" style="border-width: 0px;vertical-align: top; width: 100%; height:100%;"></iframe>
   </div>
   
   <div class="layui-footer">

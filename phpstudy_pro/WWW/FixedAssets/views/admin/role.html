@@ -8,31 +8,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
-  <link rel="stylesheet" href="../../../layuiadmin/layui/css/layui.css" media="all">
-  <link rel="stylesheet" href="../../../layuiadmin/style/admin.css" media="all">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+  <!--<link rel="stylesheet" href="../../static/style/admin.css" media="all"> -->
 </head>
 <body>
 
   <div class="layui-fluid">   
     <div class="layui-card">
       <div class="layui-form layui-card-header layuiadmin-card-header-auto">
-        <div class="layui-form-item">
-          <div class="layui-inline">
-            角色筛选
-          </div>
-          <div class="layui-inline">
-            <select name="rolename" lay-filter="LAY-user-adminrole-type">
-              <option value="-1">全部角色</option>
-              <option value="0">管理员</option>
-              <option value="1">超级管理员</option>
-              <option value="2">纠错员</option>
-              <option value="3">采购员</option>
-              <option value="4">推销员</option>
-              <option value="5">运营人员</option>
-              <option value="6">编辑</option>
-            </select>
-          </div>
+   
+        <div class="layui-inline" style="width: 50%;">
+          <label class="layui-form-label"  style="text-align: center;">角色筛选</label>
+          <div class="layui-input-block" id="tag_ids2"></div>
         </div>
+        <button class="layui-btn layuiadmin-btn-role" data-type="reload">搜索</button>
       </div>
       <div class="layui-card-body">
         <div style="padding-bottom: 10px;">
@@ -56,26 +45,83 @@
     </div>
   </div>
 
- <script src="../../../layuiadmin/layui/layui.js"></script>  
+ <script src="../../static/layui/layui.js"></script>  
+ <script src="../../static/modules/selectM.js" charset="utf-8"></script>  
   <script>
   layui.config({
-    base: '../../../layuiadmin/' //静态资源所在路径
+    base: '../../static/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'useradmin', 'table'], function(){
+  }).use(['index', 'table','selectM'], function(){
     var $ = layui.$
     ,form = layui.form
     ,table = layui.table;
-    
-    //搜索角色
-    form.on('select(LAY-user-adminrole-type)', function(data){
-      //执行重载
-      table.reload('LAY-user-back-role', {
-        where: {
-          role: data.value
-        }
-      });
+    var selectM = layui.selectM;
+    			//获取基础数据
+			var result='';
+			function GetRoleData(type,role) {
+					$.ajax({
+						url:'../../model/admin/role.php',
+								type:"post",
+								dataType:"JSON",
+								data:{'type':type,'role':role},
+						async:false, 
+						success: (data) => {
+                if(data.msg='OK'){
+                  result=data.data;
+                }else{
+                  result=data.msg;
+                }
+						},
+						error:function(data){
+						
+							$.messager.alert('错误',data.msg);
+						}
+					})
+			
+				return result;
+			};
+		// 大类下拉框
+		var roleData=GetRoleData('SELECT_R','');
+		 //多选标签-所有配置
+		var tagIns2 = selectM({
+			//元素容器【必填】
+			elem: '#tag_ids2'
+			//候选数据【必填】
+			,data: roleData
+			//默认值
+		//	,selected: [12,17] 			
+			//最多选中个数，默认5
+			,max : 6
+			//input的name 不设置与选择器相同(去#.)
+			,name: 'tag2'
+			//值的分隔符
+			,delimiter: ','
+			//候选项数据的键名
+			,field: {idName:'id',titleName:'rolename'}
     });
+
+    var newData=GetRoleData('SELECT_TB','');
+    var tableIns=table.render({ 
+      elem: "#LAY-user-back-role", 
+      //url: '../../model/admin/role.php', 
+      data:newData,
+      method:'post',
+      loading: true,
+      cols: [[{ type: "checkbox", fixed: "left" },
+      { field: "id", width: 80, title: "ID", sort: !0 }, 
+      { field: "rolename", title: "角色名" },
+        { field: "limits", title: "拥有权限" },
+        { field: "descr", title: "具体描述" }, 
+        { title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-admin" }
+    ]],
+    text: "对不起，加载出现异常！" ,
+    done: function(res, curr, count){
+          newData = res.data;
+				}
+  });
+
+  
   
     //事件
     var active = {
@@ -96,7 +142,10 @@
             //,……
           });
           */
-          table.reload('LAY-user-back-role');
+          //tableIns.reload('LAY-user-back-role');
+          tableIns.reload({
+            data:GetRoleData('SELECT_TB',tagIns2.values),
+          });
           layer.msg('已删除');
         });
       },
@@ -124,7 +173,12 @@
             submit.trigger('click');
           }
         }); 
-      }
+      },
+      reload: function(){
+        tableIns.reload({
+          data:GetRoleData('SELECT_TB',tagIns2.values),
+        });
+        }
     }  
     $('.layui-btn.layuiadmin-btn-role').on('click', function(){
       var type = $(this).data('type');

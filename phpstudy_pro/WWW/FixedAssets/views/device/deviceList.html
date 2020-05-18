@@ -14,8 +14,7 @@
 </head>
 <body >
 	<style type="text/css">
-		.layui-table-header{width: auto; overflow: visible;}
-		.layui-table-box,.layui-table-body{ width: auto;overflow: visible;}
+	
 		.table-overlay .layui-table-cell{height: auto; overflow: visible;}
 	</style>
 	<div >
@@ -43,8 +42,8 @@
 		<div>
 			 
 
-		<div class="layui-card">
-			<div class="layui-card-body layui-text">
+		<div class="layui-card"  style="height: 100%;">
+			<div class="layui-card-body layui-text"  >
 				<div id="toolbar">
 					<div class="layui-inline">
 						<div class="layui-upload">
@@ -364,6 +363,18 @@
 							if(!row.大类  ){
 							layer.msg("检查每一行，请选择分类！", { icon: 5 }); //提示
 							return;
+						}
+						//设备编号重复检查
+						var count=0;
+						for(var j=0, jrow; j < oldData.length; j++){
+							jrow=oldData[j];
+							if(jrow.设备编号==row.设备编号){
+								count+=1;
+								if(count>=2){
+									layer.msg("设备编号:"+row.设备编号+"已重复！", { icon: 5 }); //提示
+									return;
+								}
+							}	
 						}
 						if((row.flg=='insert'|| row.flg=='edit') && row.大类 ){
 							DataArr.push(row);

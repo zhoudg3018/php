@@ -1,0 +1,96 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layuiAdmin 角色管理 iframe 框</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+</head>
+<body>
+
+  <div class="layui-form" lay-filter="layuiadmin-form-role" id="layuiadmin-form-role" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">角色</label>
+      <div class="layui-input-block">
+        <select name="rolename" id="rolename">
+         
+        </select>
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">权限范围</label>
+      <div class="layui-input-block" id="cbox">
+        <input type="checkbox" name="limits[]" lay-skin="primary" title="内容系统">
+        <input type="checkbox" name="limits[]" lay-skin="primary" title="社区系统">
+
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">具体描述</label>
+      <div class="layui-input-block">
+        <textarea type="text" name="descr" lay-verify="required" autocomplete="off" class="layui-textarea"></textarea>
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <button class="layui-btn" lay-submit lay-filter="LAY-user-role-submit" id="LAY-user-role-submit">提交</button>
+    </div>
+  </div>
+
+  <script src="../../static/layui/layui.js"></script>  
+  <script>
+  layui.config({
+    base: '../../static/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','jquery'], function(){
+    var $ = layui.$
+    ,form = layui.form ;
+    $(function () {
+        //角色下拉框
+        $.ajax({
+            url: '../../model/admin/role.php',
+            //dataType:'json',
+            type:'post',
+            data:{'type':'SELECT_R'},
+            success: function (data) {
+                $('#rolename').append(new Option('请选择', '-1'));
+                $.each(JSON.parse(data).data, function (index, item) {
+                    //option  第一个参数是页面显示的值，第二个参数是传递到后台的值
+                    $('#rolename').append(new Option(item.rolename, item.id));//往下拉菜单里添加元素
+                    //设置value（这个值就可以是在更新的时候后台传递到前台的值）为2的值为默认选中
+                    //$('#rolename').val({ id });
+                });
+               // form.render(); //更新全部表单内容
+                form.render('select'); //刷新表单select选择框渲染
+            }
+        });
+        //菜单
+        $.ajax({
+            url: '../../model/admin/role.php',
+            //dataType:'json',
+            type:'post',
+            data:{'type':'SELECT_M'},
+            success: function (data) {
+             
+                $.each(JSON.parse(data).data, function (index, item) {
+                  $("#cbox").append('<input type="checkbox" name="limits['+item.id+']" lay-skin="primary" title="'+item.nm+'">');
+                });
+                form.render(); //更新全部表单内容
+                //form.render('select'); //刷新表单select选择框渲染
+            }
+        });
+
+
+    });
+
+
+
+
+  })
+  </script>
+</body>
+</html>

@@ -98,9 +98,9 @@ function selectFun($pdo){
     $query = "SELECT * from 用户列表
     where 1=1 ".$query_str."
     order by 用户编号 desc limit {$limit} offset {$offset} ";
-    $query = "SELECT * from 用户列表
-    where 1=1 ".$query_str."
-    order by 用户编号 desc";
+   // $query = "SELECT * from 用户列表
+  //  where 1=1 ".$query_str."
+  //  order by 用户编号 desc";
     $res = $pdo->prepare($query);
     $res->execute();
     $count=$res->rowCount();

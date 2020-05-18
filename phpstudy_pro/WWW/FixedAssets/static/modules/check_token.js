@@ -9,7 +9,7 @@ $(document).ready(function () {
  
 var lastTime = new Date().getTime();
 var currentTime = new Date().getTime();
-var timeOut = 5 * 60 * 1000; //设置超时时间： 1分
+var timeOut = 100 * 60 * 1000; //设置超时时间： 1分
  
 window.onload = function () {
     window.document.onmousedown = function () {

@@ -76,12 +76,11 @@
     var userTable=table.render({
         elem: "#LAY-user-manage",
         url: '../../model/user/userlist.php',
-       /* page: {//开启分页
+       page: {//开启分页
           layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
           ,first: '首页'
           ,last:'尾页'
-        },*/
-        page:false,
+        },
         method:'post',
         cols: [[{ type: "checkbox", fixed: "left" },
         { field: "用户编号", minWidth:120, title: "用户编号", sort: !0 },
@@ -162,6 +161,7 @@
                 content:url,
                 btn: ['确定','取消'],
                 yes: function(index, layero){
+                  
                   $.ajax({
                       url: '../../model/user/userlist.php',
                       data: {
@@ -187,7 +187,8 @@
               
                 },
                end: function () {  //刷新页面
-                   location.reload();
+                  // location.reload();
+                  table.reload('LAY-user-manage');
                 }
 
             });
