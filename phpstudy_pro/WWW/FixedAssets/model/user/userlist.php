@@ -84,6 +84,7 @@ function selectFun($pdo){
 
     if( $name!=''){
         $query_str=$query_str." AND 姓名 like '$name%'";
+        
     }
 
     //查询总数
