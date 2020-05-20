@@ -89,16 +89,18 @@ function delFun($pdo){
   function editInsert($pdo){
     $data=isset($_POST["data"])?$_POST["data"]:''; 
     $str= '{"code":0,"msg":"操作失败","data":[]}';
-    $query="SELECT * FROM  sy_role WHERE rolename='".$data['rolename']."'";
-    $res = $pdo->prepare($query);
-    $res->execute();
-    if( $res->rowCount()>0){
-      $str= '{"code":0,"msg":"角色已存在！请重新输入","data":[]}';
-    }else{
+    $query=null;
       if(array_key_exists('id',$data)){
           $query = "UPDATE sy_role  SET rolename='".$data['rolename']."',descr='".$data['descr']."',limits='".$data['limits']."' where id='".$data['id']."'";
       }else{
+        $query="SELECT * FROM  sy_role WHERE rolename='".$data['rolename']."'";
+        $res = $pdo->prepare($query);
+        $res->execute();
+        if( $res->rowCount()>0){
+          $str= '{"code":0,"msg":"角色已存在！请重新输入","data":[]}';
+        }else{
           $query="INSERT INTO sy_role (id,rolename,limits,descr) VALUES ( (SELECT CASE WHEN MAX(id) is null THEN 1 ELSE MAX(id)+1 END FROM sy_role ),'".$data['rolename']."','".$data['limits']."','".$data['descr']."')"; 
+        }
       }
       if(!empty($query)){
         //更新
@@ -110,7 +112,7 @@ function delFun($pdo){
           $str='{"code":0,"msg":"操作失败","data":[]}';
         }
       }
-    }
+    
      return $str;
   }
 ?>
