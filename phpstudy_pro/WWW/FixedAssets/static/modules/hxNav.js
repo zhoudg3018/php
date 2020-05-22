@@ -19,15 +19,16 @@
                 .css({'background-color':opts.background, width: opts.width });
             var node = $('<ul class="layui-nav layui-nav-tree"></ul>').attr('lay-shrink', opts.shrink?'all':'').appendTo( navroot );
             node.css('width','100%');
-            internal.getData(null,node,0);
+            var role = window.sessionStorage.getItem('role');
+            internal.getData(null,node,0,role);
         },
-        getData: function(id,node,level){
+        getData: function(id,node,level,role){
             id = id || null;
             $.ajax({
                 url: opts.url,
                 type: opts.type,
                 cache: false,
-                data: { id: id },
+                data: { id: id,role:role},
                 dataType: 'json',
                 success: function(res) {
                     $.each(res, function (index, val) {
@@ -53,7 +54,7 @@
                             $('<span class="layui-nav-more"></span>').appendTo(a);
                             var dl = $('<dl class="layui-nav-child"></dl>').appendTo(sub);
                             if( opts.autoExpand ) {
-                                internal.getData(val.id, dl, level + 1);
+                                internal.getData(val.id, dl, level + 1,role);
                                 val.isExpended = true;
                             }
                         }
@@ -62,7 +63,7 @@
                          */
                         a.on('click',function() {
                             if( val.haschildren && ( ! val.isExpended )){
-                                internal.getData(val.id, dl, level + 1 );
+                                internal.getData(val.id, dl, level + 1,role);
                                 val.isExpended = true;
                             }
                             opts.onSelect(val);
@@ -84,6 +85,7 @@
                 element: '',
                 width: 200,
                 url: '',
+                role :'',
                 type: 'post',
                 shrink: false,
                 autoExpand: false,

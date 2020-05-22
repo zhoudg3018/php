@@ -95,7 +95,7 @@
             });
             window.sessionStorage.setItem('admin',res.data[0]['用户编号']);
             //获取用户数据，并存储在本地。
-            window.sessionStorage.setItem('role',res.data[0]['用户类别']);
+            window.sessionStorage.setItem('role',res.data[0]['limits']);
 
             //登入成功的提示与跳转
               layer.msg('登入成功', {

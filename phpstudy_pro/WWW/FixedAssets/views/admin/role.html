@@ -133,15 +133,15 @@
       limit: Number.MAX_VALUE,
       loading: true,
       cols: [[{ type: "checkbox", fixed: "left" },
-      { field: "id", width: 80, title: "ID", sort: !0 }, 
-      { field: "rolename", title: "角色名", event: 'rolename',edit: 'text'},
-      { field: "limits", width:400 ,title: "拥有权限", align: 'center',templet: function(d){
+      { field: "id", title: "ID", sort: !0 }, 
+      { field: "rolename",Width:100, title: "角色名", event: 'rolename',edit: 'text'},
+      { field: "limits",  minWidth:600 ,title: "拥有权限", align: 'center',templet: function(d){
         var options = renderSelectOptions(roleData, {valueField: "id", textField: "nm", selectedValue: d.id});
         return  '<select name="limits'+ d.id+'" id="limits'+ d.id+'" lay-verify="required" xm-select="limits'+ d.id+'" xm-select-skin="primary"><option value="">请选择</option>'+options + '</select>';
           }
         },
-      { field: "descr", title: "具体描述" ,event: 'descr',edit: 'text'}, 
-      {  field: "id",title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-admin" }
+      { field: "descr",title: "具体描述" ,event: 'descr',edit: 'text'}, 
+      {  field: "id",title: "操作", align: "center", fixed: "right", toolbar: "#table-useradmin-admin" }
     ]],
     text: "对不起，加载出现异常！" ,
     done: function(res, curr, count){

@@ -16,6 +16,32 @@ if( $type=='SELECT_E'){
 }else
 if( $type=='UPDATE_E'|| $type=='INSERT_E'){
   echo EditFun($pdo,$type);
+}else
+if( $type=='SELECT_R'){
+  echo selectRole($pdo);
+}
+function selectRole($pdo){
+  $query = "SELECT id, rolename FROM sy_role order by id";
+  $res = $pdo->prepare($query);
+  $res->execute();
+  $count=$res->rowCount();
+  $str='';
+  if($count>0){
+    $str='{"code":0,"msg":"OK","data":[';
+    $i=1;
+    while($row = $res->fetch(PDO::FETCH_ASSOC)){
+      $i++;
+      $str=$str.json_encode($row);
+      if($i<$count+1){
+        $str=$str.",";
+      }
+    }
+    $str=$str."]}";
+}else{
+  $str='{"code":0,"msg":"数据获取失败","data":[]}';
+}
+  return $str;
+
 }
 function EditFun($pdo,$type){
   $username=isset($_POST["username"])?$_POST["username"]:''; 
@@ -75,15 +101,15 @@ function selectFun($pdo){
     $query_str='';
 
     if( $username!=''){
-      $query_str=$query_str." AND  用户编号 like '$username%'";
+      $query_str=$query_str." AND  a.用户编号 like '$username%'";
     }
 
     if( $role!=''){
-        $query_str=$query_str." AND  用户类别 = '$role'";
+        $query_str=$query_str." AND  a.用户类别 = '$role'";
     }
 
     if( $name!=''){
-        $query_str=$query_str." AND 姓名 like '$name%'";
+        $query_str=$query_str." AND a.姓名 like '$name%'";
         
     }
 
@@ -96,9 +122,10 @@ function selectFun($pdo){
     $perpage=ceil($total/$limit);
     $offset=($page-1)*10;
 
-    $query = "SELECT * from 用户列表
+    $query = "SELECT a.*, b.rolename FROM 用户列表 AS a  
+    LEFT JOIN sy_role AS b ON a.用户类别 = b.id
     where 1=1 ".$query_str."
-    order by 用户编号 desc limit {$limit} offset {$offset} ";
+    order by a.用户编号 desc limit {$limit} offset {$offset} ";
    // $query = "SELECT * from 用户列表
   //  where 1=1 ".$query_str."
   //  order by 用户编号 desc";

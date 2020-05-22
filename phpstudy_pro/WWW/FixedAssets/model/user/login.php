@@ -17,18 +17,19 @@ function getToken($pdo,$username,$password){
         //查询条件
         $query_str='';
         if( $username!=''){
-                $query_str=$query_str." AND  用户编号 = '$username'";
+                $query_str=$query_str." AND  a.用户编号 = '$username'";
         }else{
                 return  '{"code":0,"msg":"请输入账号","data":[]}';
         }
         if( $password!=''){
-                $password=md5($password);
-                $query_str=$query_str." AND  密码 = '$password'";
+                $pass=md5($password);
+                $query_str=$query_str." AND  a.密码 = '$pass'";
         }else{
                 return '{"code":0,"msg":"请输入密码","data":[]}';
         }
 
-        $query = "SELECT * FROM 用户列表
+        $query = "SELECT a.*, b.rolename,b.limits FROM 用户列表 AS a  
+        LEFT JOIN sy_role AS b ON a.用户类别 = b.id
         WHERE 1=1 ".$query_str." LIMIT 1"; 
         $result = $pdo->prepare($query);
         $result->execute();
@@ -43,7 +44,7 @@ function getToken($pdo,$username,$password){
                 while($row = $result->fetch(PDO::FETCH_ASSOC)){
                         $i++;
                         $sStr=json_encode($row);
-                        $token_str=md5($row['用户编号'].$row['密码']);
+                        $token_str=md5($row['用户编号']).$row['密码'];
                         if($i>=$count+1){
                                 break;
                         }

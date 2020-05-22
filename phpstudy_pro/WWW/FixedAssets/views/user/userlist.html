@@ -31,7 +31,7 @@
           <div class="layui-inline">
             <label class="layui-form-label">用户类别</label>
             <div class="layui-input-block">
-              <input type="text" name="role" id="role" placeholder="请输入" autocomplete="off" class="layui-input">
+              <select class="seloption" lay-filter="role" name="role" id="role"></select>
             </div>
           </div>
           <div class="layui-inline">
@@ -72,7 +72,26 @@
     ,admin = layui.admin
     ,table = layui.table;
     var layer=layui.layer;
-
+    //下拉框
+    selectRole();
+    function selectRole(){
+        $("#role").append("<option value=''>请选择</option>");
+        //下拉框做成
+        $.ajax({
+            type:'post',
+            url: '../../model/user/userlist.php',
+            data: {'type':'SELECT_R'},
+            dataType:'json',
+            success:function (data) {
+            $.each(data.data, function (index,item) {
+            $('#role').append(new Option(item.rolename,item.id));
+            });
+            layui.form.render("select");
+            } ,error: function () {
+            alert("查询失败")
+            }
+          });
+      }
     var userTable=table.render({
         elem: "#LAY-user-manage",
         url: '../../model/user/userlist.php',
@@ -86,7 +105,7 @@
         { field: "用户编号", minWidth:120, title: "用户编号", sort: !0 },
         { field: "姓名", title: "姓名", minWidth: 100 },
         { field: "密码", title: "密码", minWidth: 400 },
-        { field: "用户类别", title: "用户类别", minWidth: 100},
+        { field: "rolename", title: "用户类别", minWidth: 100},
         { title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
         ]],
         where : {
@@ -170,7 +189,7 @@
                               'type':type,
                               'username':$(layero).find('iframe')[0].contentWindow.username.value,
                               'name':$(layero).find('iframe')[0].contentWindow.u_name.value,
-                              'role':$(layero).find('iframe')[0].contentWindow.role.value,
+                              'role':$(layero).find('iframe')[0].contentWindow.roleId.value,
                               'password':$(layero).find('iframe')[0].contentWindow.password.value
                               },
                       method:'post',

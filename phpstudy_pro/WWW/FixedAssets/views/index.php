@@ -20,7 +20,7 @@
         </a>
         <dl class="layui-nav-child">
            <!-- <dd><a href="./view/user/info.html" target="iframeMain" >基本资料</a></dd> -->
-            <dd><a href="./view/user/password.html" target="iframeMain" >修改密码</a></dd>
+            <dd><a href="./user/password.html" target="iframeMain" >修改密码</a></dd>
         </dl>
       </li>
       <li layadmin-event="logout"  class="layui-nav-item"><a id="Esc" >退出</a></li>
@@ -28,7 +28,7 @@
   </div>
   <div id="hxNavbar"></div>
   <div class="layui-body" >
-  <iframe id="iframeMain" name="iframeMain" src="./device/deviceList.html" style="border-width: 0px;vertical-align: top; width: 100%; height:100%;"></iframe>
+  <iframe id="iframeMain" name="iframeMain" src="./home.html" style="border-width: 0px;vertical-align: top; width: 100%; height:100%;"></iframe>
   </div>
   
   <div class="layui-footer">
@@ -68,6 +68,7 @@ layui.extend({
                 });
             });
             var loading=layer.load(1);
+            
             layui.hxNav({
                 element: '#hxNavbar',        // 必须，指定ID
                 url: '../model/menu/getMenuNavbar.php',  // 请求后台数据的接口
