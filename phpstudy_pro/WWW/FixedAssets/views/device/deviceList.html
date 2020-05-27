@@ -45,19 +45,11 @@
 		<div class="layui-card"  style="height: 100vh;">
 			<div class="layui-card-body layui-text"  >
 				<div id="toolbar">
-					<div class="layui-inline">
-						<div class="layui-upload">
-							<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
-							<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
-						  </div>
-					</div>
-					<br>
-					<div >
-						<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
-							<i class="layui-icon layui-icon-add-1"></i> 添加一行
-						</button>
-					</div>
-					
+					<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
+						<i class="layui-icon layui-icon-add-1"></i> 添加一行
+					</button>
+					<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
+					<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
 				</div>
 				<div id="tableRes" class="table-overlay">
 					<table id="dataTable" lay-filter="dataTable" class="layui-hide"></table>
@@ -179,10 +171,13 @@
 				limit: 1000,
 				lineheight: 40,
 				loading: true,
+				totalRow: true,
+				toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
+				defaultToolbar: ['filter', 'exports'],
 				even: false, //不开启隔行背景
 				cols: [[
-					{title: '序号', type: 'numbers',width:60, align: 'center'},
-					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
+					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText: '合计'},
+					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center', totalRowText:viewObj.tbData.length},
 					{field: '大类', title: '大类',width:150, align: 'center',templet: function(d){
 						var options = viewObj.renderSelectOptions(viewObj.typeData, {valueField: "序号", textField: "大类", selectedValue: d.大类});
 						return '<a lay-event="type"></a><select name="type" lay-filter="type"><option value="">请选择分类</option>' + options + '</select>';
@@ -232,7 +227,7 @@
 				,url: '../../model/upload/excelUpload.php' //改成您自己的上传接口
 				,auto: false
 				,accept: 'file' //普通文件
-				,exts: 'xls|excel|xlsx'
+				,exts: 'xls|xlsx'
 				//,multiple: true
 				,dataType:'JSON'
 				,bindAction: '#upload-change-action'

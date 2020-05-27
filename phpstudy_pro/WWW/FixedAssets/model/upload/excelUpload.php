@@ -31,11 +31,11 @@ if (! empty ( $_FILES ['file'] ['name'] ))
 function _readExcel($filename,$arr)  
 {      
     //引用PHPexcel 类  
-    require '../../PHPExcel/PHPExcel/IOFactory.php'; 
+    include '../../PHPExcel/PHPExcel/IOFactory.php'; 
+   
     try{
       //加载excel文件  
       $objPHPExcelReader = PHPExcel_IOFactory::load($filename);    
-  
       $sheet = $objPHPExcelReader->getSheet(0);        // 读取第一个工作表(编号从 0 开始)  
       $highestRow = $sheet->getHighestRow();           // 取得总行数  
       //$highestColumn = $sheet->getHighestColumn();     // 取得总列数  

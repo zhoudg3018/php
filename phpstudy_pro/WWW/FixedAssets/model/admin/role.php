@@ -3,25 +3,8 @@
  header("Content-Type:text/html;charset=utf-8");
  //获取变量
  $type=isset($_POST["type"])?$_POST["type"]:'SELECT_TB'; 
- $roleArr=isset($_POST["role"])?$_POST["role"]:''; 
- $roleId=isset($_POST["roleId"])?$_POST["roleId"]:''; 
-
 if( $type=='SELECT_TB'){
-    //大类
-    $query='';
-    if( $roleArr!=''){
-        $role='';
-        for($i=0;$i <count($roleArr); $i++){
-            $role=$role."'".$roleArr[$i]."',";
-            if($i==(count($roleArr)-1)){
-                $role=substr($role,0,strlen($role)-1);
-            break;
-            }
-        }
-        $query=" AND  id in ($role)";
-    }
-    $query = "SELECT * from sy_role WHERE 1=1 $query Order by id ";
-    echo selectFun($pdo,$query);
+    echo selectFunTB($pdo);
 }else
 if( $type=='SELECT_R'){
     $query = "SELECT id,rolename from sy_role order by id";
@@ -114,6 +97,55 @@ function delFun($pdo){
       }
     
      return $str;
+  }
+  function selectFunTB($pdo){
+    $page=isset($_POST["page"])?$_POST["page"]:1; 
+    $limit=isset($_POST["limit"])?trim($_POST['limit']):10; 
+    $roleArr=isset($_POST["role"])?$_POST["role"]:''; 
+        //大类
+      $sql='';
+      if( $roleArr!=''){
+          $role='';
+          for($i=0;$i <count($roleArr); $i++){
+              $role=$role."'".$roleArr[$i]."',";
+              if($i==(count($roleArr)-1)){
+                  $role=substr($role,0,strlen($role)-1);
+              break;
+              }
+          }
+          $sql=" AND  id in ($role)";
+      }
+      //查询条件
+      $query = "SELECT * from sy_role WHERE 1=1 $sql Order by id ";
+      //查询总数
+      $res = $pdo->prepare($query);
+      $res->execute();
+      $total=$res->rowCount();
+      //分页页数计算
+      $perpage=ceil($total/$limit);
+      $offset=($page-1)*10;
+  
+      $query = "SELECT * from sy_role WHERE 1=1 $sql Order by id  limit {$limit} offset {$offset} ";
+      $res = $pdo->prepare($query);
+      $res->execute();
+      $count=$res->rowCount();
+      $str='';
+      if($count>0){    
+        $str= '{"code":0,"msg":"OK","perpage":'.$perpage.',"count":'.$total.',"data":[';
+        $i=1;
+        while($row = $res->fetch(PDO::FETCH_ASSOC)){
+          $i++;
+          $str=$str.json_encode($row);
+          if($i<$count+1){
+            $str=$str.",";
+          }
+        }
+        $str=$str."]}";
+      }else{
+         $str='{"code":1,"msg":"无数据","perpage":'.$perpage.',"count":'.$total.',"data":[]}';
+      }
+      
+      return $str;
   }
 ?>
 

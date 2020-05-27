@@ -157,7 +157,7 @@
         
       }
       ,add: function(){
-        layerOpen('添加信息','./userform.html','INSERT_E','更新成功');
+        layerOpen('增加信息','./userform.html','INSERT_E','更新成功');
       }
     };
     table.on('tool(LAY-user-manage)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
@@ -174,7 +174,7 @@
     function layerOpen(title,url,type,msg){
         layer.open({
                 type: 2,
-                title: '修改信息',
+                title: title,
                 fixed: false,
                 maxmin: true,
                 area: ['500px','450px'],
@@ -189,7 +189,7 @@
                               'type':type,
                               'username':$(layero).find('iframe')[0].contentWindow.username.value,
                               'name':$(layero).find('iframe')[0].contentWindow.u_name.value,
-                              'role':$(layero).find('iframe')[0].contentWindow.roleId.value,
+                              'role':$(layero).find('iframe')[0].contentWindow.roleId2.value,
                               'password':$(layero).find('iframe')[0].contentWindow.password.value
                               },
                       method:'post',

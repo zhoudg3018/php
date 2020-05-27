@@ -37,19 +37,12 @@
 		<div class="layui-card" style="height: 100%;" >
 			<div class="layui-card-body layui-text">
 				<div id="toolbar">
-					<div class="layui-inline">
-						<div class="layui-upload">
-							<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
-							<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
-						  </div>
-					</div>
-					<br>
-					<div >
-						<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
-							<i class="layui-icon layui-icon-add-1"></i> 添加一行
-						</button>
-					</div>
-					
+				<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
+				<i class="layui-icon layui-icon-add-1"></i> 添加一行
+				</button>
+				<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
+				<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
+
 				</div>
 				<div id="tableRes" class="table-overlay">
 					<table id="dataTable" lay-filter="dataTable" class="layui-hide"></table>
@@ -115,11 +108,14 @@
 				data: tbData,
 				limit: 1000,
 				lineheight: 40,
+				totalRow:true,
 				loading: true,
+				toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
+				defaultToolbar: ['filter', 'exports'],
 				even: false, //不开启隔行背景
 				cols: [[
-					{title: '序号', type: 'numbers',width:60, align: 'center'},
-					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
+					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText:'合计'},
+					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center',totalRowText:tbData.length},
 					{field: '维修单位', title: '维修单位',width:90,align: 'center', event: '维修单位',edit: 'text'},
 					{field: '维修内容', title: '维修内容', width:90,align: 'center', event: '维修内容',edit: 'text'},
 					{field: '维修时间', title: '维修时间',width:90, align: 'center', event: '维修时间',edit: 'text'},

@@ -129,7 +129,11 @@
       //url: '../../model/admin/role.php', 
       data:newData,
       method:'post',
-      page:false,
+      page: {//开启分页
+          layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
+          ,first: '首页'
+          ,last:'尾页'
+        },
       limit: Number.MAX_VALUE,
       loading: true,
       cols: [[{ type: "checkbox", fixed: "left" },
@@ -223,7 +227,7 @@
                     success:function(data){
                           
                             if(data.msg=='操作成功'){
-                              layer.msg(data.msg);
+                            //  layer.msg(data.msg);
                               tableIns.reload({
                               data:GetRoleData('SELECT_TB',tagIns.values),
                             });
@@ -241,8 +245,10 @@
                   });
             
               });
-              submit.trigger('click');  
-            }
+              
+                submit.trigger('click');  
+              
+              }
             }
         }); 
 

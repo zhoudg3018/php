@@ -33,7 +33,8 @@
     <div class="layui-form-item">
       <label class="layui-form-label">用户类别</label>
       <div class="layui-input-inline">
-        <input type="text" name="role"  id="role" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+        <select class="seloption" lay-filter="roleId" name="roleId" id="roleId">
+      </select>
       </div>
     </div>
   </div>
@@ -47,7 +48,30 @@
   }).use(['index','user','form','jquery','layer'], function(){
   var layer = layui.layer //弹层
   var $ = layui.$;
-
+    // 修改
+  $( function () {
+    selectRole();
+    function selectRole(){
+      
+      $("#roleId").append("<option value=''>请选择</option>");
+      //下拉框做成
+      $.ajax({
+          type:'post',
+          url: '../../model/user/userlist.php',
+          data: {'type':'SELECT_R'},
+          dataType:'json',
+          async:false, 
+          success:function (data) {
+          $.each(data.data, function (index,item) {
+          $('#roleId').append(new Option(item.rolename,item.id));
+          });
+          layui.form.render("select");
+          } ,error: function () {
+          alert("查询失败")
+          }
+        });
+    }
+});
 });
 </script>
 </body>
