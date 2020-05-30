@@ -176,14 +176,14 @@
 				defaultToolbar: ['filter', 'exports'],
 				even: false, //不开启隔行背景
 				cols: [[
-					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText: '合计'},
-					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center', totalRowText:viewObj.tbData.length},
+					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText: '设备数量合计'},
+					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
 					{field: '大类', title: '大类',width:150, align: 'center',templet: function(d){
-						var options = viewObj.renderSelectOptions(viewObj.typeData, {valueField: "序号", textField: "大类", selectedValue: d.大类});
+						var options = viewObj.renderSelectOptions(viewObj.typeData, {valueField: "序号"});
 						return '<a lay-event="type"></a><select name="type" lay-filter="type"><option value="">请选择分类</option>' + options + '</select>';
 					}},
 					{field: '名称', title: '名称',width:60,align: 'center', event: '名称',edit: 'text'},
-					{field: '规格', title: '规格', width:60,align: 'center', event: '规格',edit: 'text'},
+					{field: '规格', title: '规格', width:60,align: 'center', event: '规格',edit: 'text', totalRowText:viewObj.tbData.length +'台'},
 					{field: '单位', title: '单位',width:60, align: 'center', event: '单位',edit: 'text'},
 					{field: '数量', title: '数量', width:60,align: 'center', event: '数量',edit: 'text'},
 					{field: '金额', title: '金额',width:60,align: 'center',  event: '金额',edit: 'text'},

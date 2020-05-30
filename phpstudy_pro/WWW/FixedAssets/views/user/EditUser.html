@@ -33,7 +33,7 @@
     <div class="layui-form-item">
       <label class="layui-form-label">用户类别</label>
       <div class="layui-input-inline">
-        <select class="seloption" lay-filter="roleId2" name="roleId2" id="roleId2">
+        <select class="seloption" lay-filter="roleId" name="roleId" id="roleId">
       </select>
       </div>
     </div>
@@ -62,7 +62,7 @@
             if(data.msg='OK'){
               $("#username").val(data.data[0]['用户编号']);
               $("#u_name").val(data.data[0]['姓名']);
-              $("#roleId2").val(data.data[0]['用户类别']);
+              $("#roleId").val(data.data[0]['用户类别']);
               $("#password").val(data.data[0]['密码']);
               layui.form.render('select');
               layer.close(loading);
@@ -98,7 +98,7 @@
             dataType:'json',
             success:function (data) {
             $.each(data.data, function (index,item) {
-            $('#roleId2').append(new Option(item.rolename,item.id));
+            $('#roleId').append(new Option(item.rolename,item.id));
             });
             layui.form.render("select");
             } ,error: function () {

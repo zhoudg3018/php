@@ -114,11 +114,11 @@
 				defaultToolbar: ['filter', 'exports'],
 				even: false, //不开启隔行背景
 				cols: [[
-					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText:'合计'},
-					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center',totalRowText:tbData.length},
+					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText:'合计维修次数'},
+					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
 					{field: '维修单位', title: '维修单位',width:90,align: 'center', event: '维修单位',edit: 'text'},
 					{field: '维修内容', title: '维修内容', width:90,align: 'center', event: '维修内容',edit: 'text'},
-					{field: '维修时间', title: '维修时间',width:90, align: 'center', event: '维修时间',edit: 'text'},
+					{field: '维修时间', title: '维修时间',width:90, align: 'center', event: '维修时间',edit: 'text',totalRowText:tbData.length+'次'},
 					{field: '维修费用', title: '维修费用', width:90,align: 'center', event: '维修费用',edit: 'text'},
 					{field: '维修单位负责人', title: '维修单位负责人',width:120,align: 'center',  event: '维修单位负责人',edit: 'text'},
 					{field: '记录人', title: '记录人', width:90,event: '记录人',edit: 'text'},
