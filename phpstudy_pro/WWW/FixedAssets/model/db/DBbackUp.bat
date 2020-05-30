@@ -1,5 +1,5 @@
 @echo off
-chcp 65001
+chcp 936
 echo 正在初始化环境变量...
 echo.
 
@@ -34,7 +34,7 @@ set CURRENTTIME=%CURRENTTIME: =0%
 set MYDATETIME=%TODAY%%CURRENTTIME%
 ::echo %MYDATETIME%
 ::g_dump命令将具体数据库导出为.bak文件
-
+chcp 65001
 call %POSTGRESQL_DIR%pg_dump.exe -h localhost -p 5432 -U %USER% %DB_NAME% > %DBBAK_DIR%\%DB_NAME%_%MYDATETIME%_%DBMS_NAME%.bak
 ::echo %POSTGRESQL_DIR%pg_dump.exe -h localhost -p 5432 -U %USER% %DB_NAME% > %DBBAK_DIR%\%DB_NAME%_%MYDATETIME%_%DBMS_NAME%.bak
 if %errorlevel% == 0 (
