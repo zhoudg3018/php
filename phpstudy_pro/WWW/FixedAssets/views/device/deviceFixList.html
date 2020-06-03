@@ -56,12 +56,14 @@
 	</div>
 	<!--recommended script position-->
 	<script src="../../static/layui/layui.js" charset="utf-8"></script>
+	<script src="../../static/layui_exts/excel.js" charset="utf-8"></script>
 	<script type="text/javascript">
 	//layui 模块化引用
-		layui.use(['jquery', 'table', 'layer','laydate','upload'], function(){
+		layui.use(['jquery', 'table', 'layer','laydate','upload','excel'], function(){
 			var $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
 			var laydate = layui.laydate;
 			var upload = layui.upload;
+			var excel = layui.excel;
 			//获取基础数据
 			var result='';
 			function GetAndUpateData(type,id,DataArr) {
@@ -111,30 +113,28 @@
 				totalRow:true,
 				loading: true,
 				toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
-				defaultToolbar: ['filter', 'exports'],
+				defaultToolbar: ['filter', {title:'Execl导出',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],//这里在右边显示 
 				even: false, //不开启隔行背景
 				cols: [[
-					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText:'合计维修次数'},
+					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText:'合计'},
 					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
 					{field: '维修单位', title: '维修单位',width:90,align: 'center', event: '维修单位',edit: 'text'},
 					{field: '维修内容', title: '维修内容', width:90,align: 'center', event: '维修内容',edit: 'text'},
-					{field: '维修时间', title: '维修时间',width:90, align: 'center', event: '维修时间',edit: 'text',totalRowText:tbData.length+'次'},
-					{field: '维修费用', title: '维修费用', width:90,align: 'center', event: '维修费用',edit: 'text'},
+					{field: '维修时间', title: '维修时间',width:90, align: 'center', event: '维修时间',edit: 'text'},
+					{field: '维修费用', title: '维修费用', width:90,align: 'center', event: '维修费用',edit: 'text',totalRow: true},
 					{field: '维修单位负责人', title: '维修单位负责人',width:120,align: 'center',  event: '维修单位负责人',edit: 'text'},
+					{field: '联系电话', title: '联系电话', width:90,event: '联系电话',edit: 'text'},
 					{field: '记录人', title: '记录人', width:90,event: '记录人',edit: 'text'},
 					{field: '记录时间', title: '记录时间',width:150,align: 'center', event: '记录时间',templet:"<div>{{layui.util.toDateString(d.记录时间, 'yyyy-MM-dd HH:mm:ss')}}</div> "},
 					{field: '备注', title: '备注',width:200,align: 'center', event: '备注',edit: 'text'},
-					{field: '规定使用年限', title: '规定使用年限',width:120,align: 'center', event: '规定使用年限',edit: 'text'},
-					{field: '备注', title: '备注',width:60,align: 'center', event: '备注',edit: 'text'},
 					{field: '购买部件名称', title: '购买部件名称',width:120,align: 'center', event: '购买部件名称',edit: 'text'},
-					{field: '购买价格', title: '购买价格',width:90,align: 'center', event: '购买价格',edit: 'text'},
-					{field: '购买部件价格', title: '购买部件价格',width:90,align: 'center', event: '购买部件价格',edit: 'text'},
+					{field: '购买部件价格', title: '购买部件价格',width:120,align: 'center', event: '购买部件价格',edit: 'text',totalRow: true},
+					{field: '接待人', title: '接待人',width:90,align: 'center', event: '接待人',edit: 'text'},
 					{field: '报修人员', title: '报修人员',width:90,align: 'center', event: '报修人员',edit: 'text'},
 					{field: '维修人员', title: '维修人员',width:90,align: 'center', event: '维修人员',edit: 'text'},
 					{field: '设备保养方法', title: '设备保养方法',width:120,align: 'center', event: '设备保养方法',edit: 'text'},
 					{field: '保养日期', title: '保养日期',width:90,align: 'center', event: '保养日期',edit: 'text'},
 					{field: '保养人员', title: '保养人员',width:90,align: 'center', event: '保养人员',edit: 'text'},
-					{field: '使用日期', title: '使用日期', width:90,align: 'center',event: '使用日期',edit: 'text'},		
 					{field: 'id', title: '操作',width:90,align: 'center', templet: function(d){
 						return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="'+ d.id +'"><i class="layui-icon layui-icon-delete"></i>移除</a>';
 					}},
@@ -157,7 +157,7 @@
 				,before: function(input){    
 					var data = {};    
 					data.field = "设备编号,维修单位,维修内容,维修时间,维修费用,维修单位负责人,联系电话,记录人,记录时间,备注,"
-					+"购买部件名称,购买部件价格,报修人员,维修人员,设备保养方法,保养日期,保养人员";
+					+"购买部件名称,购买部件价格,接待人,报修人员,维修人员,设备保养方法,保养日期,保养人员";
 					this.data=data;  
 					}  
 				,done: function(res){
@@ -169,7 +169,7 @@
 						for(var i=0; i< res.data.length;i++){
 							var data=res.data[i];
 							newRow = {id: new Date().valueOf(), 
-							设备编号:data['设备编号'],
+							设备编号:(Array(4).join(0) + data['设备编号']).slice(-4),
 							维修单位:data['维修单位'],
 							维修内容:data['维修内容'],
 							维修时间:data['维修时间'],
@@ -181,6 +181,7 @@
 							备注:data['备注'],
 							购买部件名称:data['购买部件名称'],
 							购买部件价格:data['购买部件价格'],
+							报修人员:data['接待人'],
 							报修人员:data['报修人员'],
 							维修人员:data['维修人员'],
 							设备保养方法:data['设备保养方法'],
@@ -212,10 +213,11 @@
 									维修单位负责人:null,
 									联系电话:null,
 									记录人:null,
-									记录时间:new Date(),
+									记录时间:layui.util.toDateString(new Date(), 'yyyy-MM-dd HH:mm:ss'),
 									备注:null,
 									购买部件名称:null,
 									购买部件价格:null,
+									接待人:null,
 									报修人员:null,
 									维修人员:null,
 									设备保养方法:null,
@@ -325,6 +327,7 @@
                 switch(event){
 					case "维修时间":
 					case "保养日期":
+		
 							var field = $(this).data('field');
 							laydate.render({
 								elem: this.firstChild
@@ -346,6 +349,7 @@
 					case "备注":
 					case "购买部件名称":
 					case "购买部件价格":
+					case "接待人":
 					case "报修人员":
 					case "维修人员":
 					case "设备保养方法":
@@ -368,7 +372,60 @@
 						});
 						break;						
 				}
-            });
+			});
+			table.on('toolbar(dataTable)', function(obj){
+			
+			if(obj.event === 'LAYTABLE_EXCEL'){
+				exportDataTest();
+			}
+			});
+						/**
+ * 导出 total 数据测试
+ * @param  {[type]} total [description]
+ * @return {[type]}       [description]
+ */
+function exportDataTest() {
+    // 如果数据量特别大，最好直接传入 AOA 数组，减少内存/CPU消耗
+    var data = [
+      ['设备编号','大类','名称','规格','单位','数量','金额','出厂时间','生产厂家','购置时间','规定使用年限','备注','记录人','记录时间',
+	  '购买价格','设备负责人','机器原值','机器净值','使用部门','品牌','生产能力','使用日期','固定资产转移单','附件','使用状态']
+	]
+	var total=tbData.length;
+    if (total> 0) {
+      // 造 num 条数据
+      for (var i = 0; i < total; i++) {
+        data.push([
+		tbData[i]['设备编号'],
+		tbData[i]['大类'],
+		tbData[i]['名称'],
+		tbData[i]['规格'],
+		tbData[i]['单位'],
+		tbData[i]['数量'],
+		tbData[i]['金额'],
+		tbData[i]['出厂时间'],
+		tbData[i]['生产厂家'],
+		tbData[i]['购置时间'],
+		tbData[i]['规定使用年限'],
+		tbData[i]['备注'], 
+		tbData[i]['记录人'], 
+		tbData[i]['记录时间'], 
+		tbData[i]['购买价格'],
+		tbData[i]['设备负责人'],
+		tbData[i]['机器原值'],
+		tbData[i]['使用部门'],
+		tbData[i]['品牌'],
+		tbData[i]['生产能力'],
+		tbData[i]['使用日期'],
+		tbData[i]['固定资产转移单'],
+		tbData[i]['附件'],
+		tbData[i]['使用状态']
+        ])
+      }
+    }
+    excel.exportExcel({
+      sheet1: data
+    }, '设备资产维修记录表_'+layui.util.toDateString(new Date(), 'yyyyMMddHHmmss')+'(导出' + total + '条数据).xlsx', 'xlsx')
+}
 		});
 	</script>
 </body>

@@ -46,6 +46,7 @@
         <div style="padding-bottom: 10px;">
           <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
           <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="reload">刷新</button>
         </div>
         
         <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
@@ -159,6 +160,14 @@
       ,add: function(){
         layerOpen('增加信息','./userform.html','INSERT_E','更新成功');
       }
+       ,reload: function(){
+            //执行重载
+          table.reload('LAY-user-manage', {
+            page: {
+            curr: 1 //重新从第 1 页开始
+            }
+      });
+      }
     };
     table.on('tool(LAY-user-manage)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
     var data = obj.data //获得当前行数据
@@ -182,7 +191,10 @@
                 content:url,
                 btn: ['确定','取消'],
                 yes: function(index, layero){
-                  
+                  var role =$(layero).find('iframe')[0].contentWindow.roleId.value;
+                  if(role==null || role==''){
+                    layer.msg('请选择用户类别', { icon: 5 }); //提示
+                  }else{
                   $.ajax({
                       url: '../../model/user/userlist.php',
                       data: {
@@ -196,7 +208,7 @@
                       dataType:'json',
                       success:function(data){
                            layer.msg(data.msg);
-                          if(data.msg=msg) {
+                          if(data.msg=msg && data.code !=1){
                             layer.close(index);
                           }  
                      
@@ -205,7 +217,7 @@
                               $.messager.alert('错误',data.msg);
                         }
                     });
-              
+                  }
                 },
                end: function () {  //刷新页面
                   // location.reload();

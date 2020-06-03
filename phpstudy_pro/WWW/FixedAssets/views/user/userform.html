@@ -65,6 +65,7 @@
           $.each(data.data, function (index,item) {
           $('#roleId').append(new Option(item.rolename,item.id));
           });
+      
           layui.form.render("select");
           } ,error: function () {
           alert("查询失败")

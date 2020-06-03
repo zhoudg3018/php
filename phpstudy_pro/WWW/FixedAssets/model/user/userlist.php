@@ -50,20 +50,29 @@ function EditFun($pdo,$type){
   $password=isset($_POST["password"])?$_POST["password"]:''; 
   $password=md5($password);
   $query='';
+  $str='';
   if($type=='INSERT_E'){
+    $query="SELECT * FROM  用户列表 WHERE 用户编号='$username'";
+    $res = $pdo->prepare($query);
+    $res->execute();
+    if( $res->rowCount()>0){
+      $str= '{"code":1,"msg":"编号已存在！请重新输入","data":[]}';
+    }else{
     $query = "INSERT INTO 用户列表 (id,姓名,密码,用户类别,用户编号) values ("
     ."(SELECT CASE WHEN  MAX(id) IS NOT NULL THEN MAX(id)+1 ELSE 1 END  FROM  用户列表),'$name','$password','$role','$username')";
+    }
   }else{
     $query = "UPDATE 用户列表 SET  用户类别='$role', 密码='$password', 姓名='$name'  WHERE 用户编号 ='$username'";
   }
   $res = $pdo->prepare($query);
   $res->execute();
   $count=$res->rowCount();
-  $str='';
-  if($count>0){
-    $str='{"code":0,"msg":"更新成功","data":[]}';
-  }else{
-    $str ='{"code":0,"msg":"更新成功","data":[]}';
+  if($str ==''){
+    if($count>0){
+      $str='{"code":0,"msg":"更新成功","data":[]}';
+    }else{
+      $str ='{"code":0,"msg":"更新成功","data":[]}';
+    }
   }
   return $str;
 }
@@ -114,7 +123,7 @@ function selectFun($pdo){
     }
 
     //查询总数
-    $query = "SELECT id from 用户列表 where 1=1 ".$query_str;
+    $query = "SELECT id from 用户列表 a where 1=1 ".$query_str;
     $res = $pdo->prepare($query);
     $res->execute();
     $total=$res->rowCount();
