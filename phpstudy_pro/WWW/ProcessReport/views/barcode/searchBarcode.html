@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layuiAdmin 网站用户</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../static/style/admin.css" media="all">
+</head>
+<body>
+
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">详单条码</label>
+            <div class="layui-input-block">
+              <input type="text" name="code" id="code"   autocomplete="off" class="layui-input">
+            </div>
+          </div>
+         
+          <div class="layui-inline">
+            <label class="layui-form-label">详单编号</label>
+            <div class="layui-input-block">
+              <input type="text" name="detailNo"  id="detailNo" autocomplete="off" class="layui-input">
+            </div>
+      </div>
+     
+		  <div class="layui-inline">
+            <label class="layui-form-label">订单编号</label>
+            <div class="layui-input-block">
+              <input type="text" name="orderNo"  id="orderNo"  autocomplete="off" class="layui-input">
+            </div>
+		  </div>
+		  <div class="layui-inline">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-block">
+              <input type="text" name="sDateTime"  id="sDateTime" autocomplete="off" class="layui-input">
+            </div>
+		  </div>
+		  <div class="layui-inline">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-block">
+              <input type="text" name="eDateTime"  id="eDateTime"  autocomplete="off" class="layui-input">
+            </div>
+      </div>
+		  <div class="layui-inline"   >
+            <label class="layui-form-label">工序名称</label>
+      <div class="layui-input-block" style="width:300px;">
+			  <select class="seloption" lay-filter="required" name="gx_name" id="gx_name" xm-select="gx_name"xm-select-skin="normal" >
+			  </select>
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-user-front-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px;">
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+          <button class="layui-btn layuiadmin-btn-useradmin" data-type="reload">刷新</button>
+        </div>
+        
+        <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
+        <script type="text/html" id="imgTpl"> 
+          <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
+        </script> 
+        <script type="text/html" id="table-useradmin-webuser">
+          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../static/layui/layui.all.js"></script>
+  <script src="../../static/modules/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="../../static/modules/formSelects-v4.css" />
+  <script>
+  layui.config({
+    base: '../../static/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','table','user','form','jquery','layer','laydate','formSelects','element'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,admin = layui.admin
+    ,table = layui.table
+    ,element = layui.element
+    ,layer=layui.layer
+    ,formSelects = layui.formSelects
+    ,laydate = layui.laydate;
+   //设置50%进度
+   element.progress('demo', '50%')
+	//执行一个laydate实例
+	laydate.render({
+		elem: '#sDateTime', //指定元素
+		type:'datetime'
+	});
+	//执行一个laydate实例
+	laydate.render({
+		elem: '#eDateTime' , //指定元素
+		type:'datetime'
+  });
+
+  $(function () {
+  layui.formSelects.render('gx_name', {
+    //init: ["1", "请先选择机构"],              //默认值
+    skin: "primary", //多选皮肤normal|primary|default|danger|warm
+    height: "auto",                //是否固定高度, 38px | auto
+    radio: false,                  //是否设置为单选模式
+    direction: "down",        //显示方式向下显示
+    on: function(id, vals, val, isAdd, isDisabled){
+    },            //同formSelects.on
+    searchType: "dl"    //搜索框的位置
+    });
+
+    layui.formSelects.data('gx_name', 'server', {
+      type:'post',
+      url: '../../model/barcode/searchBarcode.php',
+      data:{'type':'SELECT_GX'},
+      success: function(id, url, searchVal, result){
+      //选中，如： "1010101,1010103"，一定要转为数组格式，特别注意：[1010101,1010103]或["1010101","1010103"]都不能正常选中
+      //var organizations = "1010101,1010103";//要选中的值，
+      //layui.formSelects.value('gx_name',organizations.split(','));
+      }
+    });
+  });
+ 
+     
+  //table表做成
+  var userTable=table.render({
+        elem: "#LAY-user-manage",
+        url: '../../model/barcode/searchBarcode.php',
+        page: {//开启分页
+          layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
+          ,first: '首页'
+          ,last:'尾页'
+        },
+        method:'post',
+        cols: [[{ type: "checkbox", fixed: "left" },
+        { field: "详单条码", minWidth:120, title: "详单条码", sort: !0 },
+        { field: "订单编号", title: "订单编号", minWidth: 100 },
+        { field: "详单编号", title: "详单编号", minWidth: 100 },
+        { field: "值", title: "进度条", minWidth: 200,templet: function(d){  //***重点***：判断颜色
+                var ys = '';
+                if(50<d.值 && d.值<100){
+                    ys='layui-bg-orange'
+                }else if(0<d.值 && d.值<=50){
+                    ys='layui-bg-red'
+                }else {
+                    ys='layui-bg-green'
+                }
+                return '<div class="layui-progress layui-progress-big" lay-showpercent="true"><div class="layui-progress-bar '+ys+'" lay-percent="'+d.值+'%"></div></div><br>';
+					}},
+        { field: "类别", title: "类别", minWidth: 100,},
+        { field: "工序", title: "状态", minWidth: 100},
+        { field: "工序类型", title: "类型", minWidth: 100},
+        { field: "扫描时间", title: "扫描时间", minWidth: 100},
+        { field:"id",title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
+        ]],
+        where : {
+               type : 'SELECT_TB',
+          } ,
+     
+        //height: "full-220",
+        text: "对不起，加载出现异常！"
+        ,done:function (res,currentCount) {
+				//***重点***：table渲染完成后渲染element进度条
+                element.render()
+         }
+
+    })
+
+    //监听搜索
+    form.on('submit(LAY-user-front-search)', function(data){
+      var field = data.field;
+      
+      //执行重载
+      table.reload('LAY-user-manage', {
+        where: field,page: {
+        curr: 1 //重新从第 1 页开始
+        }
+      });
+    });
+  
+    //事件
+    var active = {
+      batchdel: function(){
+        var checkStatus = table.checkStatus('LAY-user-manage')
+        ,checkData = checkStatus.data; //得到选中的数据
+
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        } 
+          layer.confirm('确定删除吗？', function(index) {
+                //请求登入接口
+              admin.req({
+                url: '../../model/barcode/searchBarcode.php',
+                data: {'checkData':checkData,'type':'DELETE_C'},
+                method:'post',
+                done: function(res){
+                  if(res.msg =='删除成功'){
+                    table.reload('LAY-user-manage');
+                    layer.msg('已删除');
+                  }else{
+                    layer.msg(res);
+                  }
+                }
+          });
+        });
+      }
+      ,add: function(){
+        location.href = '../../views/barcode/barcode.html'; //后台主页
+      }
+       ,reload: function(){
+            //执行重载
+          table.reload('LAY-user-manage', {
+            page: {
+            curr: 1 //重新从第 1 页开始
+            }
+      });
+      }
+    };
+    table.on('tool(LAY-user-manage)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var data = obj.data //获得当前行数据
+    ,layEvent = obj.event; //获得 lay-event 对应的值
+    if( layEvent === 'edit'){
+         layerOpen('修改信息','./EditUser.html?id='+data.用户编号,'UPDATE_E','更新成功');
+        }
+    if( layEvent === 'del'){
+          layer.confirm('确定删除吗？', function(index) {
+                //请求登入接口
+              admin.req({
+                url: '../../model/barcode/searchBarcode.php',
+                data: {'id':data.id,'type':'DELETE_T'},
+                method:'post',
+                done: function(res){
+                  if(res.msg =='删除成功'){
+                    obj.del();
+                    layer.close(index);
+                    layer.msg('已删除');
+                  }else{
+                    layer.msg(res);
+                  }
+                }
+          });
+        });
+    }
+    });  
+    $('.layui-btn.layuiadmin-btn-useradmin').on('click', function(){
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+    function layerOpen(title,url,type,msg){
+        layer.open({
+                type: 2,
+                title: title,
+                fixed: false,
+                maxmin: true,
+                area: ['500px','450px'],
+                shadeClose: true,
+                content:url,
+                btn: ['确定','取消'],
+                yes: function(index, layero){
+                  var role =$(layero).find('iframe')[0].contentWindow.roleId.value;
+                  if(role==null || role==''){
+                    layer.msg('请选择用户类别', { icon: 5 }); //提示
+                  }else{
+                  $.ajax({
+                      url: '../../model/user/userlist.php',
+                      data: {
+                              'type':type,
+                              'username':$(layero).find('iframe')[0].contentWindow.username.value,
+                              'name':$(layero).find('iframe')[0].contentWindow.u_name.value,
+                              'role':$(layero).find('iframe')[0].contentWindow.roleId.value,
+                              'password':$(layero).find('iframe')[0].contentWindow.password.value
+                              },
+                      method:'post',
+                      dataType:'json',
+                      success:function(data){
+                           layer.msg(data.msg);
+                          if(data.msg=msg && data.code !=1){
+                            layer.close(index);
+                          }  
+                     
+                        },
+                          error:function(data){
+                              $.messager.alert('错误',data.msg);
+                        }
+                    });
+                  }
+                },
+               end: function () {  //刷新页面
+                  // location.reload();
+                  table.reload('LAY-user-manage');
+                }
+
+            });
+      }
+  });
+  </script>
+</body>
+</html>

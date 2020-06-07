@@ -8,8 +8,8 @@
     // 接收数据id
     $admin_id = $_POST['admin_id'];
     $admin_user = $_POST['admin_user'];
-    $admin_pass  = md5( $_POST['admin_pass']);
-    $admin_qpass = md5( $_POST['admin_qpass']);
+    $admin_pass  = base64_encode( $_POST['admin_pass']);
+    $admin_qpass = base64_encode( $_POST['admin_qpass']);
     /** 后台验证数据 **/
     if(empty($admin_user))
     {

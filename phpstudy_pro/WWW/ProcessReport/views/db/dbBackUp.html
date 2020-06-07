@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>设置我的资料</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+</head>
+<body>
+  <div class="layui-fluid" >
+    <div class="layui-row layui-col-space15" >
+      <div class="layui-col-md12" >
+        <div class="layui-card" >
+          <div class="layui-card-header">数据库备份</div>
+          <div class="layui-card-body" >
+            <div class="layui-form" lay-filter=""></div>
+              <div class="layui-form-item">
+                <button type="button" class="layui-btn layui-btn"  lay-submit lay-filter="dbBackUp" title="数据库备份">数据库备份</button>
+              </div>
+             
+            </div>
+            <div id="tableRes" class="table-overlay">
+                <table id="db_dataTable" lay-filter="db_dataTable" class="layui-hide"></table>
+                <script type="text/html" id="table-db-backup">
+                  <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="down"  download=""><i class="layui-icon layui-icon-down"></i>下载</a>
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del" ><i class="layui-icon layui-icon-delete"></i>删除</a>
+                </script>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../../static/layui/layui.js"></script> 
+
+  <script type="text/javascript" src="../../static/modules/md5.js"></script>
+  <script>
+  layui.config({
+    base: '../../static/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'form','jquery','table'], function (t) {
+    var $ = layui.$,
+    layer = layui.layer,
+    table = layui.table,
+    form = layui.form;
+  var host=window.location.origin;
+    var tableIns = table.render({
+				elem: '#db_dataTable',
+        url: '../../model/db/dbBackUp.php',
+        page:false,
+        cellMinWidth: 60, 
+				cols: [[
+					{title: '序号', type: 'numbers',align: 'center'},
+					{field: 'filename', title: '文件名',align: 'center'},
+          {field: 'filepath', title: '路径', align: 'center'},
+          { title: "操作", cellMinWidth:200,align: "center", fixed: "right", toolbar: "#table-db-backup" }
+				]],
+        where:{ DBtype:'GET_DB_FILES',},
+				done: function(res, curr, count){
+				}
+			});
+      table.on('tool(db_dataTable)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+      var data = obj.data //获得当前行数据
+      ,layEvent = obj.event; //获得 lay-event 对应的值
+      if( layEvent === 'down'){
+        $('a[lay-event="down"]').attr("href",host+'/FixedAssets/model/db/'+data.filepath);
+        }else if(layEvent === 'del'){
+          $.ajax({
+            type:'post',
+            url: '../../model/db/dbBackUp.php',
+            data: {'DBtype':'DB_DEL','data':data},
+            success:function (res) {
+              table.reload('db_dataTable');
+              layer.msg(res); 
+            }
+          });
+      }
+     });  
+    
+    form.on("submit(dbBackUp)", function () { 
+        $.ajax({
+            type:'post',
+            url: '../../model/db/dbBackUp.php',
+            data: {'DBtype':'DB_BACKUP'},
+            success:function (res) {
+              table.reload('db_dataTable');
+              layer.msg(res); 
+            }
+          });
+
+    });
+  });
+  </script>
+  </body>
+  </html>

@@ -20,7 +20,7 @@ if(!empty($_POST['admin_user']))
     /** 判断账户密码是否正确 **/
     $query = "select * from tb_admin where admin_user = :user and admin_pass = :password";
     $res = $pdo->prepare($query);
-    $res->execute(array(':user'=>$admin_user,':password'=>md5($admin_pass)));
+    $res->execute(array(':user'=>$admin_user,':password'=>base64_encode($admin_pass)));
     $admin = $res->fetch(PDO::FETCH_ASSOC);
     if(is_array($admin) && !empty($admin)){
         session_start();

@@ -39,12 +39,12 @@ $row = $res->fetch(PDO::FETCH_ASSOC);
                             </div>
                             <div class="form-group">
                                 <label for="admin_pass">密码</label>
-                                <input type="password" class="form-control"  id="admin_pass" name="admin_pass" value="<?php echo $row['admin_pass'] ?>">
+                                <input type="password" class="form-control"  id="admin_pass" name="admin_pass" value="<?php echo base64_decode($row['admin_pass']); ?>">
                             </div>
                             <div class="form-group">
                                 <label for="admin_qpass">确认密码</label>
                                 <input type="password"  class="form-control" id="admin_qpass"
-                                       name="admin_qpass" value="<?php echo $row['admin_qpass'] ?>">
+                                       name="admin_qpass" value="<?php echo base64_decode($row['admin_qpass']); ?>">
                             </div>
                             <button type="submit" class="btn btn-primary">提交</button>
                             <!--<input type="button" class="btn btn-primary" name="Submit" style="margin-right: 20px;float:right" onclick="javascript:history.back(-1);" value="返回">

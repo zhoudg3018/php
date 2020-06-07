@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>登入页面</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../static/style/admin.css" media="all">
+  <link rel="stylesheet" href="../../static/style/login.css" media="all">
+</head>
+<body>
+
+  <div class="layadmin-user-login layadmin-user-display-show" id="LAY-user-login" style="display: none;">
+
+    <div class="layadmin-user-login-main">
+      <div class="layadmin-user-login-box layadmin-user-login-header">
+        <h2>登入页面</h2>
+      </div>
+      <div class="layadmin-user-login-box layadmin-user-login-body layui-form">
+        <div class="layui-form-item">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-username" for="LAY-user-login-username"></label>
+          <input type="text" name="username" id="LAY-user-login-username" lay-verify="required" placeholder="用户编号" class="layui-input">
+        </div>
+        <div class="layui-form-item">
+          <label class="layadmin-user-login-icon layui-icon layui-icon-password" for="LAY-user-login-password"></label>
+          <input type="password" name="password" id="LAY-user-login-password" lay-verify="required" placeholder="密码" class="layui-input">
+        </div>
+      
+        <div class="layui-form-item">
+            <div id="slider"></div>
+				</div>
+        <div class="layui-form-item">
+						<button class="layui-btn " lay-submit lay-filter="LAY-user-login-submit">立即提交</button>
+						<button class="layui-btn " type="button" id="reset">重置滑块</button>
+        </div>
+        <div class="layui-trans layui-form-item layadmin-user-login-other">
+          <label>社交账号登入</label>
+          <a href="javascript:;"><i class="layui-icon layui-icon-login-qq"></i></a>
+          <a href="javascript:;"><i class="layui-icon layui-icon-login-wechat"></i></a>
+          <a href="javascript:;"><i class="layui-icon layui-icon-login-weibo"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="layui-trans layadmin-user-login-footer">
+      <p>© 2020 <a href="http://www.kaiyangdoors.com/" target="_blank">开洋木门</a></p>
+    </div>
+  </div>
+  <script src="../../static/layui/layui.js"></script>
+  <script>
+  layui.config({
+    base: '../../static/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'user','sliderVerify','jquery'], function(){
+    var $ = layui.$
+    ,setter = layui.setter
+    ,admin = layui.admin
+    ,form = layui.form
+    ,sliderVerify = layui.sliderVerify
+    ,router = layui.router()
+    ,search = router.search;
+    form.render();
+    
+    //验证滑块
+    var slider = sliderVerify.render({
+      elem: '#slider',
+      onOk: function(){//当验证通过回调
+        layer.msg("滑块验证通过");
+      }
+    })
+    $('#reset').on('click',function(){
+      slider.reset();
+    })
+    
+    //提交
+    form.on('submit(LAY-user-login-submit)', function(obj){
+      
+      if(!slider.isOk()){
+        layer.msg("请先通过滑块验证");
+        return false;
+      }
+      
+      //请求登入接口
+      admin.req({
+        url: '../../model/user/login.php' //实际使用请改成服务端真实接口
+        ,data: obj.field
+        ,done: function(res){
+          if(res.msg=='登入成功'){
+            //请求成功后，写入 access_token
+            layui.sessionData(setter.tableName, {
+              key: setter.request.tokenName
+              ,value: res.access_token
+            });
+            window.sessionStorage.setItem('admin',res.data[0]['用户编号']);
+            //获取用户数据，并存储在本地。
+            window.sessionStorage.setItem('role',res.data[0]['limits']);
+            window.sessionStorage.setItem('工序名称',res.data[0]['工序名称']);
+            //登入成功的提示与跳转
+              layer.msg('登入成功', {
+                offset: '15px'
+                ,icon: 1
+                ,time: 1000
+              }, function(){
+                 location.href = '../index.php'; //后台主页
+              });
+          }else{
+            layer.msg(res.msg, {
+                 offset: '15px'
+                ,icon: 2
+                ,time: 1000
+              });
+              slider.reset();
+            }
+       }
+      });
+      
+    });
+  });
+  </script>
+</body>
+</html>

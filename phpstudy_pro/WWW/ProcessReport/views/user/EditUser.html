@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+</head>
+<body>
+<!--<form method="GET" action="EditOrderUPdate.php" > -->
+  <div class="layui-form" lay-filter="layui-form-useradmin" id="layuiform-useradmin" style="padding: 20px 0 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户编号</label>
+      <div class="layui-input-inline">
+        <input type="text" name="username" id="username"  readyonly="true" lay-verify="required" readonly="true" placeholder=""  autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">姓名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="u_name"  id="u_name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">密码</label>
+      <div class="layui-input-inline">
+        <input type="password"  name="password"  id="password" lay-verify="required" placeholder="请输入"  autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">工序名称</label>
+      <div class="layui-input-inline">
+        <input type="text" name="gx_name"  id="gx_name" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">用户类别</label>
+      <div class="layui-input-inline">
+        <select class="seloption" lay-filter="roleId" name="roleId" id="roleId">
+      </select>
+      </div>
+    </div>
+  </div>
+<!--</from>-->
+  <script src="../../static/layui/layui.js" ></script>  
+<script>
+    layui.config({
+    base: '../../static/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index','user','form','jquery','layer'], function(){
+  var layer = layui.layer //弹层
+  var $ = layui.$;
+  // 修改
+  $( function () {
+    
+    selectRole();
+    var loading=layer.load(3);
+       $.ajax({
+          url: '../../model/user/userlist.php',
+          data: {'username':GetQueryString('id'),'type':'SELECT_E'},
+          method:'post',
+          dataType:'json',
+          success:function(data){
+            if(data.msg='OK'){
+              $("#username").val(data.data[0]['用户编号']);
+              $("#u_name").val(data.data[0]['姓名']);
+              $("#roleId").val(data.data[0]['用户类别']);
+              $("#gx_name").val(data.data[0]['工序名称']);
+              $("#password").val(data.data[0]['密码']);
+              layui.form.render('select');
+              layer.close(loading);
+            }else{
+              layer.msg('数据获取失败');
+              layer.close(loading);
+            }
+            },
+              error:function(data){
+                layer.close(loading);
+                  $.messager.alert('错误',data.msg);
+            }
+        });
+
+
+        function GetQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r != null){
+        //解决中文乱码
+        return decodeURI(r[2]);
+        }
+        return null;
+       }
+       
+      function selectRole(){
+        $("#roleId").append("<option value=''>请选择</option>");
+        //下拉框做成
+        $.ajax({
+            type:'post',
+            url: '../../model/user/userlist.php',
+            data: {'type':'SELECT_R'},
+            dataType:'json',
+            success:function (data) {
+            $.each(data.data, function (index,item) {
+            $('#roleId').append(new Option(item.rolename,item.id));
+            });
+            layui.form.render("select");
+            } ,error: function () {
+            alert("查询失败")
+            }
+          });
+      }
+  });
+});
+</script>
+</body>
+</html>

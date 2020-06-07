@@ -22,7 +22,7 @@ function getToken($pdo,$username,$password){
                 return  '{"code":0,"msg":"请输入账号","data":[]}';
         }
         if( $password!=''){
-                $pass=md5($password);
+                $pass=base64_encode($password);
                 $query_str=$query_str." AND  a.密码 = '$pass'";
         }else{
                 return '{"code":0,"msg":"请输入密码","data":[]}';
@@ -44,7 +44,7 @@ function getToken($pdo,$username,$password){
                 while($row = $result->fetch(PDO::FETCH_ASSOC)){
                         $i++;
                         $sStr=json_encode($row);
-                        $token_str=md5($row['用户编号']).$row['密码'];
+                        $token_str=base64_encode($row['用户编号'].'/'.$password);
                         if($i>=$count+1){
                                 break;
                         }

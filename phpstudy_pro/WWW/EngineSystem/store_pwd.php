@@ -7,9 +7,9 @@
     }
     /** 接收数据 **/
     $admin_user = $_POST['admin_user'];
-    $admin_pass = md5($_POST['admin_pass']);            // 使用md5加密
-    $admin_new_pass  = md5($_POST['admin_new_pass']);   // 使用md5加密
-    $admin_new_pass2 = md5($_POST['admin_new_pass2']);  // 使用md5加密
+    $admin_pass = base64_encode($_POST['admin_pass']);            // 使用base64加密
+    $admin_new_pass  = base64_encode($_POST['admin_new_pass']);   // 使用base64加密
+    $admin_new_pass2 = base64_encode($_POST['admin_new_pass2']);  // 使用base64加密
 
     /** 后台验证数据 **/
     if(empty($admin_user))

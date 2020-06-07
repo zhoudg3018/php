@@ -47,7 +47,9 @@ function _readExcel($filename,$arr)
             for ($column = 0; $column< count($arr); $column++) {  
                 $val = $sheet->getCellByColumnAndRow($column, 1)->getValue();  
                if($arr[$column]==$val){
+           
                 $val = $sheet->getCellByColumnAndRow($column, $row)->getValue();  
+        
                 if($str=='{'){
                   $str=$str.'"'.$arr[$column].'":"'.$val.'"'; 
                 }else{

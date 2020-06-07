@@ -48,7 +48,7 @@ function EditFun($pdo,$type){
   $role=isset($_POST["role"])?$_POST["role"]:''; 
   $name=isset($_POST["name"])?$_POST["name"]:''; 
   $password=isset($_POST["password"])?$_POST["password"]:''; 
-  $password=md5($password);
+  $password=base64_encode($password);
   $query='';
   $str='';
   if($type=='INSERT_E'){
@@ -89,6 +89,7 @@ function selectEditFun($pdo){
       $i=1;
       while($row = $res->fetch(PDO::FETCH_ASSOC)){
         $i++;
+        $row['密码']=base64_decode($row['密码']);
         $str=$str.json_encode($row);
         if($i<$count+1){
           $str=$str.",";
