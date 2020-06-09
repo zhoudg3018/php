@@ -69,18 +69,22 @@
           <button class="layui-btn layuiadmin-btn-useradmin" data-type="reload">刷新</button>
         </div>
         
-        <table id="LAY-user-manage" lay-filter="LAY-user-manage"></table>
+        <table id="LAY-code-manage" lay-filter="LAY-code-manage"></table>
         <script type="text/html" id="imgTpl"> 
           <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         </script> 
         <script type="text/html" id="table-useradmin-webuser">
-          <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+           {{#  if(d.值 != 100){ }}
+           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>修改</a>
+            {{# } }}
+          <a class="layui-btn layui-btn-green layui-btn-xs" lay-event="video"><i class="layui-icon layui-icon-video"></i>查看</a>
+            {{#  if(d.值 != 100){ }}
          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            {{# } }}
         </script>
       </div>
     </div>
   </div>
-
   <script src="../../static/layui/layui.all.js"></script>
   <script src="../../static/modules/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
   <link rel="stylesheet" href="../../static/modules/formSelects-v4.css" />
@@ -120,7 +124,7 @@
     direction: "down",        //显示方式向下显示
     on: function(id, vals, val, isAdd, isDisabled){
     },            //同formSelects.on
-    searchType: "dl"    //搜索框的位置
+   // searchType: "dl"    //搜索框的位置
     });
 
     layui.formSelects.data('gx_name', 'server', {
@@ -138,13 +142,15 @@
      
   //table表做成
   var userTable=table.render({
-        elem: "#LAY-user-manage",
+        elem: "#LAY-code-manage",
         url: '../../model/barcode/searchBarcode.php',
         page: {//开启分页
           layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
           ,first: '首页'
           ,last:'尾页'
         },
+        toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
+				defaultToolbar: ['filter', 'exports','print'],//这里在右边显示 
         method:'post',
         cols: [[{ type: "checkbox", fixed: "left" },
         { field: "详单条码", minWidth:120, title: "详单条码", sort: !0 },
@@ -163,9 +169,9 @@
 					}},
         { field: "类别", title: "类别", minWidth: 100,},
         { field: "工序", title: "状态", minWidth: 100},
-        { field: "工序类型", title: "类型", minWidth: 100},
+        { field: "工序类型", title: "工序类型", minWidth: 100},
         { field: "扫描时间", title: "扫描时间", minWidth: 100},
-        { field:"id",title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
+        { field:"id",title: "操作", width: 250, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
         ]],
         where : {
                type : 'SELECT_TB',
@@ -185,7 +191,7 @@
       var field = data.field;
       
       //执行重载
-      table.reload('LAY-user-manage', {
+      table.reload('LAY-code-manage', {
         where: field,page: {
         curr: 1 //重新从第 1 页开始
         }
@@ -195,7 +201,7 @@
     //事件
     var active = {
       batchdel: function(){
-        var checkStatus = table.checkStatus('LAY-user-manage')
+        var checkStatus = table.checkStatus('LAY-code-manage')
         ,checkData = checkStatus.data; //得到选中的数据
 
         if(checkData.length === 0){
@@ -209,7 +215,7 @@
                 method:'post',
                 done: function(res){
                   if(res.msg =='删除成功'){
-                    table.reload('LAY-user-manage');
+                    table.reload('LAY-code-manage');
                     layer.msg('已删除');
                   }else{
                     layer.msg(res);
@@ -223,20 +229,72 @@
       }
        ,reload: function(){
             //执行重载
-          table.reload('LAY-user-manage', {
+          table.reload('LAY-code-manage', {
             page: {
             curr: 1 //重新从第 1 页开始
             }
       });
       }
     };
-    table.on('tool(LAY-user-manage)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    table.on('tool(LAY-code-manage)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
     var data = obj.data //获得当前行数据
     ,layEvent = obj.event; //获得 lay-event 对应的值
-    if( layEvent === 'edit'){
-         layerOpen('修改信息','./EditUser.html?id='+data.用户编号,'UPDATE_E','更新成功');
+    if( layEvent === 'video'){
+      layer.open({
+                type: 2,
+                title: '查看信息',
+                fixed: false,
+                maxmin: true,
+                area: ['800px','600px'],
+                shadeClose: true,
+                content:'./barcodeform.html?id='+data.id,
+                btn: ['取消'],
+               end: function () {  //刷新页面
+                }
+            });
         }
-    if( layEvent === 'del'){
+        else if(layEvent === 'edit'){
+          layer.open({
+                type: 2,
+                title: '修改信息',
+                fixed: false,
+                maxmin: true,
+                area: ['800px','600px'],
+                shadeClose: true,
+                content:'./editBarcode.html?id='+data.id,
+                btn: ['确定','取消'],
+                yes: function(index, layero){
+                  $.ajax({
+                      url: '../../model/barcode/searchBarcode.php',
+                      data: {
+                              'type':'EDIT',
+                              'sm_time':$(layero).find('iframe')[0].contentWindow.sm_time.value,
+                              'id':$(layero).find('iframe')[0].contentWindow.sm_id.value
+                              },
+                      method:'post',
+                      dataType:'json',
+                      success:function(data){
+                           layer.msg(data.msg);
+                          if(data.msg=='更新成功'){
+                            layer.close(index);
+                          }  
+                        },
+                          error:function(data){
+                              $.messager.alert('错误',data.msg);
+                        }
+                    });
+             
+                },
+               end: function () {  //刷新页面
+                  // location.reload();
+                  table.reload('LAY-code-manage');
+                }
+
+            });
+
+        }
+
+       else if( layEvent === 'del'){
           layer.confirm('确定删除吗？', function(index) {
                 //请求登入接口
               admin.req({
@@ -260,52 +318,6 @@
       var type = $(this).data('type');
       active[type] ? active[type].call(this) : '';
     });
-    function layerOpen(title,url,type,msg){
-        layer.open({
-                type: 2,
-                title: title,
-                fixed: false,
-                maxmin: true,
-                area: ['500px','450px'],
-                shadeClose: true,
-                content:url,
-                btn: ['确定','取消'],
-                yes: function(index, layero){
-                  var role =$(layero).find('iframe')[0].contentWindow.roleId.value;
-                  if(role==null || role==''){
-                    layer.msg('请选择用户类别', { icon: 5 }); //提示
-                  }else{
-                  $.ajax({
-                      url: '../../model/user/userlist.php',
-                      data: {
-                              'type':type,
-                              'username':$(layero).find('iframe')[0].contentWindow.username.value,
-                              'name':$(layero).find('iframe')[0].contentWindow.u_name.value,
-                              'role':$(layero).find('iframe')[0].contentWindow.roleId.value,
-                              'password':$(layero).find('iframe')[0].contentWindow.password.value
-                              },
-                      method:'post',
-                      dataType:'json',
-                      success:function(data){
-                           layer.msg(data.msg);
-                          if(data.msg=msg && data.code !=1){
-                            layer.close(index);
-                          }  
-                     
-                        },
-                          error:function(data){
-                              $.messager.alert('错误',data.msg);
-                        }
-                    });
-                  }
-                },
-               end: function () {  //刷新页面
-                  // location.reload();
-                  table.reload('LAY-user-manage');
-                }
-
-            });
-      }
   });
   </script>
 </body>

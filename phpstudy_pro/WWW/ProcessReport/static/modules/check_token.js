@@ -9,17 +9,25 @@ $(document).ready(function () {
  
 var lastTime = new Date().getTime();
 var currentTime = new Date().getTime();
-var timeOut = 100 * 60 * 1000; //设置超时时间： 1分
+var timeOut = 1 * 60 * 1000; //设置超时时间： 1分
  
 window.onload = function () {
+    window.sessionStorage.setItem("lastTime", new Date().getTime());
     window.document.onmousedown = function () {
-        localStorage.setItem("lastTime", new Date().getTime());
+        window.sessionStorage.removeItem("lastTime");
+        window.sessionStorage.setItem("lastTime", new Date().getTime());
+    }
+    window.document.getElementById("iframeMain").contentWindow.document.onmousedown= function () {
+        window.sessionStorage.removeItem("lastTime");
+        window.sessionStorage.setItem("lastTime", new Date().getTime());
     }
 };
+
+
  
 function checkTimeout() {
     currentTime = new Date().getTime(); //更新当前时间
-    lastTime = localStorage.getItem("lastTime");
+    lastTime = window.sessionStorage.getItem("lastTime");
     // console.log(currentTime - lastTime);
     // console.log(timeOut);
     if (currentTime - lastTime > timeOut) { //判断是否超时

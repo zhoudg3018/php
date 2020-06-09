@@ -12,7 +12,8 @@ Class sQRCode{
   public $limit;
   public $page;
   public $checkData;
-  public $id;
+  public $sm_time;
+  public $i_value;
    public function sQRCodeFun(){
     $this->type=isset($_POST["type"])?$_POST["type"]:''; 
     $this->code=isset($_POST["code"])?$_POST["code"]:''; 
@@ -23,8 +24,9 @@ Class sQRCode{
     $this->detailNo=isset($_POST["detailNo"])?$_POST["detailNo"]:''; 
     $this->orderNo=isset($_POST["orderNo"])?$_POST["orderNo"]:''; 
     $this->limit=isset($_POST["limit"])?$_POST["limit"]:10;
-    $this->page=isset($_POST["page"])?$_POST["page"]:10;
+    $this->page=isset($_POST["page"])?$_POST["page"]:1;
     $this->checkData=isset($_POST["checkData"])?$_POST["checkData"]:''; 
+    $this->sm_time=isset($_POST["sm_time"])?$_POST["sm_time"]:''; 
     $this->DBDA=new DBDA();
    
     if($this->type=='SELECT_GX'){
@@ -36,8 +38,56 @@ Class sQRCode{
     }
       else if($this->type=='DELETE_C'){
         $this->delCheckData();
+    }else if($this->type=='SELECT_ONE'){
+      $this->OneSearch();
+    }else if($this->type=='EDIT'){
+    $this->OneEdit();
     }
    }
+   public function OneEdit(){
+    if($this->sm_time !='' &&$this->sm_time !=''){
+        $pdo=$this->DBDA->DBLink();
+        $query = "UPDATE 工序进度表  SET  扫描时间 ='$this->sm_time' where id='$this->id'";
+        $res = $pdo->prepare($query);
+        $res->execute();
+        $count=$res->rowCount();
+        $str='';
+        if($count>0){    
+          $str= '{"code":0,"msg":"更新成功","data":[]}';
+        }else{
+          $str= '{"code":0,"msg":"更新失败","data":[]}';
+        }
+        $pdo=null;
+    }
+    else{
+       $str='{"code":0,"msg":"请输入扫描时间","data":[]}';
+    }
+    echo $str;
+  }
+   public function OneSearch(){
+    $pdo=$this->DBDA->DBLink();
+    $query = "SELECT  * FROM  工序进度表视图 where id='$this->id' limit 1";
+    $res = $pdo->prepare($query);
+    $res->execute();
+    $count=$res->rowCount();
+    $str='';
+    if($count>0){    
+      $str= '{"code":0,"msg":"OK","data":[';
+      $i=1;
+      while($row = $res->fetch(PDO::FETCH_ASSOC)){
+        $i++;
+        $str=$str.json_encode($row);
+        if($i<$count+1){
+          $str=$str.",";
+        }
+      }
+      $str=$str."]}";
+    }else{
+       $str='{"code":1,"msg":"无数据","data":[]}';
+    }
+    $pdo=null;
+    echo $str;
+  }
    function delCheckData(){
     $pdo=$this->DBDA->DBLink();
     $query='';
