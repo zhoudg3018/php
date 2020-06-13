@@ -9,7 +9,7 @@ $(document).ready(function () {
  
 var lastTime = new Date().getTime();
 var currentTime = new Date().getTime();
-var timeOut = 1 * 60 * 1000; //设置超时时间： 1分
+var timeOut = 15 * 60 * 1000; //设置超时时间： 1分
  
 window.onload = function () {
     window.sessionStorage.setItem("lastTime", new Date().getTime());
@@ -17,14 +17,14 @@ window.onload = function () {
         window.sessionStorage.removeItem("lastTime");
         window.sessionStorage.setItem("lastTime", new Date().getTime());
     }
-    window.document.getElementById("iframeMain").contentWindow.document.onmousedown= function () {
-        window.sessionStorage.removeItem("lastTime");
-        window.sessionStorage.setItem("lastTime", new Date().getTime());
-    }
 };
-
-
- 
+/*document.getElementById("iframeMain").contentWindow.onload= function () {
+    document.getElementById("iframeMain").contentWindow.document.onmousedown = function () {
+    window.sessionStorage.removeItem("lastTime");
+    window.sessionStorage.setItem("lastTime", new Date().getTime());
+    }
+}
+ */
 function checkTimeout() {
     currentTime = new Date().getTime(); //更新当前时间
     lastTime = window.sessionStorage.getItem("lastTime");
