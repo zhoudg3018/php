@@ -51,6 +51,7 @@ function EditFun($pdo,$type){
   $name=isset($_POST["name"])?$_POST["name"]:''; 
   $gx_name=isset($_POST["gx_name"])?$_POST["gx_name"]:''; 
   $password=isset($_POST["password"])?$_POST["password"]:''; 
+  $gx_type=isset($_POST["gx_type"])?$_POST["gx_type"]:''; 
   $query='';
   $str='';
   $query="SELECT * FROM  用户列表 WHERE 用户编号='$username'";
@@ -61,10 +62,10 @@ function EditFun($pdo,$type){
   }else{
     $password=base64_encode($password);
     if($type=='INSERT_E'){
-      $query = "INSERT INTO 用户列表 (id,姓名,密码,用户类别,用户编号,工序名称) values ("
-      ."(SELECT CASE WHEN  MAX(id) IS NOT NULL THEN MAX(id)+1 ELSE 1 END  FROM  用户列表),'$name','$password','$role','$username','$gx_name')";
+      $query = "INSERT INTO 用户列表 (id,姓名,密码,用户类别,用户编号,工序名称,工序类型) values ("
+      ."(SELECT CASE WHEN  MAX(id) IS NOT NULL THEN MAX(id)+1 ELSE 1 END  FROM  用户列表),'$name','$password','$role','$username','$gx_name','$gx_type')";
     }else{
-      $query = "UPDATE 用户列表 SET  用户类别='$role', 密码='$password', 姓名='$name' , 工序名称='$gx_name'  WHERE 用户编号 ='$username'";
+      $query = "UPDATE 用户列表 SET  用户类别='$role', 密码='$password', 姓名='$name' , 工序名称='$gx_name',工序类型='$gx_type'   WHERE 用户编号 ='$username'";
     }
   }
   $res = $pdo->prepare($query);

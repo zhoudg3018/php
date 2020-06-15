@@ -69,7 +69,7 @@
       var data = obj.data //获得当前行数据
       ,layEvent = obj.event; //获得 lay-event 对应的值
       if( layEvent === 'down'){
-        $('a[lay-event="down"]').attr("href",host+'/FixedAssets/model/db/'+data.filepath);
+        $('a[lay-event="down"]').attr("href",host+'/ProcessReport/model/db/'+data.filepath);
         }else if(layEvent === 'del'){
           $.ajax({
             type:'post',

@@ -107,6 +107,7 @@
         { field: "姓名", title: "姓名", minWidth: 100 },
         { field: "密码", title: "密码", minWidth: 400 },
         { field: "工序名称", title: "工序名称", minWidth: 100 },
+        { field: "工序类型", title: "工序类型", minWidth: 100 },
         { field: "rolename", title: "用户类别", minWidth: 100},
         { title: "操作", width: 150, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
         ]],
@@ -204,7 +205,8 @@
                               'name':$(layero).find('iframe')[0].contentWindow.u_name.value,
                               'role':$(layero).find('iframe')[0].contentWindow.roleId.value,
                               'gx_name':$(layero).find('iframe')[0].contentWindow.gx_name.value,
-                              'password':$(layero).find('iframe')[0].contentWindow.password.value
+                              'password':$(layero).find('iframe')[0].contentWindow.password.value,
+                              'gx_type':$(layero).find('iframe')[0].contentWindow.gx_type.value
                               },
                       method:'post',
                       dataType:'json',

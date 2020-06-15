@@ -37,6 +37,12 @@
       </div>
     </div>
     <div class="layui-form-item">
+      <label class="layui-form-label">工序类型</label>
+      <div class="layui-input-inline">
+        <input type="text" name="gx_type"  id="gx_type" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
       <label class="layui-form-label">用户类别</label>
       <div class="layui-input-inline">
         <select class="seloption" lay-filter="roleId" name="roleId" id="roleId">
@@ -71,6 +77,7 @@
               $("#roleId").val(data.data[0]['用户类别']);
               $("#gx_name").val(data.data[0]['工序名称']);
               $("#password").val(data.data[0]['密码']);
+              $("#gx_type").val(data.data[0]['工序类型']);
               layui.form.render('select');
               layer.close(loading);
             }else{
