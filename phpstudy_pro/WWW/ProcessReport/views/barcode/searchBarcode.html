@@ -159,9 +159,11 @@
         { field: "值", title: "进度条", minWidth: 200,templet: function(d){  //***重点***：判断颜色
                 var ys = '';
                 if(50<d.值 && d.值<100){
-                    ys='layui-bg-orange'
-                }else if(0<d.值 && d.值<=50){
+                    ys='layui-bg-blue'
+                }else if(0<d.值 && d.值<=25){
                     ys='layui-bg-red'
+                }else if(25<d.值 && d.值<=50){
+                    ys='layui-bg-orange'
                 }else {
                     ys='layui-bg-green'
                 }

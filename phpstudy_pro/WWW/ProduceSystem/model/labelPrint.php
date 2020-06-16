@@ -125,7 +125,7 @@
     var str='[';
     for(var i=1;i<=len;i++){
       str +='{"scdh":"'+$("#scdh"+i).text().replace(/\s+/g, "");
-      str +='","xdbh":"'+$("#xdbh"+i).text().replace(/\s+/g, "");
+      str +='","xdbz":"'+$("#xdbz"+i).text().replace(/\s+/g, "");
       str +='","cpcc":"'+$("#cpcc"+i).text().replace(/\s+/g, "");
       str +='","fblx":"'+$("#fblx"+i).text().replace(/\s+/g, "");
       str +='","xh":"'+$("#xh"+i).text().replace(/\s+/g, "");
@@ -164,7 +164,7 @@
 
 	  "Field": '['  ///*字段， type ftBlob (base64格式) ,ftString ftInteger ftBoolean, ftFloat, ftCurrency,ftDateTime,  size (ftString 设置为实际长度,其他的设置为0,例如 ftInteger ftBlob 等设置为0 ) 
     +'{"type": "ftString", "name": "scdh","size": 255,"required": true},'
-    +'{"type": "ftString", "name": "xdbh","size": 255,"required": true},'
+    +'{"type": "ftString", "name": "xdbz","size": 255,"required": true},'
     +'{"type": "ftString", "name": "cpcc","size": 255,"required": true},'
     +'{"type": "ftString", "name": "fblx","size": 255,"required": true},'
     +'{"type": "ftString", "name": "xh","size": 255,"required": true},'
@@ -218,7 +218,7 @@
       var i=num;
       var str='[';
       str +='{"scdh":"'+$("#scdh"+i).text().replace(/\s+/g, "");
-      str +='","xdbh":"'+$("#xdbh"+i).text().replace(/\s+/g, "");
+      str +='","xdbz":"'+$("#xdbz"+i).text().replace(/\s+/g, "");
       str +='","cpcc":"'+$("#cpcc"+i).text().replace(/\s+/g, "");
       str +='","fblx":"'+$("#fblx"+i).text().replace(/\s+/g, "");
       str +='","xh":"'+$("#xh"+i).text().replace(/\s+/g, "");
@@ -256,7 +256,7 @@
 
     "Field": '['  ///*字段， type ftBlob (base64格式) ,ftString ftInteger ftBoolean, ftFloat, ftCurrency,ftDateTime,  size (ftString 设置为实际长度,其他的设置为0,例如 ftInteger ftBlob 等设置为0 ) 
     +'{"type": "ftString", "name": "scdh","size": 255,"required": true},'
-    +'{"type": "ftString", "name": "xdbh","size": 255,"required": true},'
+    +'{"type": "ftString", "name": "xdbz","size": 255,"required": true},'
     +'{"type": "ftString", "name": "cpcc","size": 255,"required": true},'
     +'{"type": "ftString", "name": "fblx","size": 255,"required": true},'
     +'{"type": "ftString", "name": "xh","size": 255,"required": true},'
@@ -359,8 +359,8 @@
     <br>
     <table id="dyId" border ="1px solid #ccc" cellspacing="0" cellpadding="0" align="center" width="600px" height="200px" style="text-align:center;vertical-align:middle;">
       <tr>
-      <td>订单号</td> <td Id="scdh<?php echo $number ?>"><?php echo $row2['生产单号'] ?></td>
-      <td>详单号</td> <td colspan="2" Id="xdbh<?php echo $number ?>"><?php echo $row2['详单编号'] ?></td>  
+      <td>订单号</td> <td Id="scdh<?php echo $number ?>"><?php echo $row2['生产单号'].' ('.$row2['组号'].'-'.$row2['组序号'].')' ?></td>
+      <td>详单备注</td> <td colspan="2" Id="xdbz<?php echo $number ?>"><?php echo $row2['详单备注'] ?></td>  
       </tr>
       <tr>
         <td>尺寸</td> <td Id="cpcc<?php echo $number ?>" ><?php echo $row2['门长'].'*'.$row2['门宽'].'*'.$row2['门厚'] ?></td>
@@ -369,7 +369,7 @@
       </tr>
       <tr>
         <td>型号</td>  <td Id="xh<?php echo $number ?>" ><?php echo $row2['型号'] ?></td>
-        <td>门锁孔</td>  <td Id="msk<?php echo $number ?>" ><?php echo $row2['门锁孔'] ?></td>
+        <td>门锁孔/大类</td>  <td Id="msk<?php echo $number ?>" ><?php echo $row2['门锁孔'].'/'.$row2['大类'] ?></td>
       </tr>
       <tr>
       <td>颜色</td> <td Id="yqys<?php echo $number ?>" ><?php echo $row2['油漆颜色']?></td> 

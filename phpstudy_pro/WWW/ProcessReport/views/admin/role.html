@@ -15,10 +15,12 @@
 <body>
 	<style type="text/css">
       .layui-table-cell{
-        height:38px;
-        line-height: 38px;
-    }
+        height:50px;
+        line-height: auto;
 
+        white-space:normal;
+    }
+   
 </style>
 	</style>
   <div class="layui-fluid">   
@@ -39,7 +41,7 @@
         </div>
       
         <table id="LAY-user-back-role" lay-filter="LAY-user-back-role"></table>  
-        <script type="text/html" id="table-useradmin-admin">
+        <script type="text/html" id="tableOneLineSave">
           <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="save"><i class="layui-icon layui-icon-save"></i>保存</a>
         </script>
       </div>
@@ -140,11 +142,11 @@
       { field: "rolename",Width:100, title: "角色名", event: 'rolename',edit: 'text'},
       { field: "limits",  minWidth:600 ,title: "拥有权限", align: 'center',templet: function(d){
         var options = renderSelectOptions(roleData, {valueField: "id", textField: "nm", selectedValue: d.id});
-        return  '<select name="limits'+ d.id+'" id="limits'+ d.id+'" lay-verify="required" xm-select="limits'+ d.id+'" xm-select-skin="primary"><option value="">请选择</option>'+options + '</select>';
+        return  '<select name="limits'+ d.id+'" id="limits'+ d.id+'" lay-verify="required" xm-select="limits'+ d.id+'"  xm-select-search="" xm-select-skin="primary"><option value="">请选择</option>'+options + '</select>';
           }
         },
       { field: "descr",title: "具体描述" ,event: 'descr',edit: 'text'}, 
-      {  field: "id",title: "操作", align: "center", fixed: "right", toolbar: "#table-useradmin-admin" }
+      {  field: "id",title: "操作", align: "center", fixed: "right", toolbar: "#tableOneLineSave" }
     ]],
     text: "对不起，加载出现异常！" ,
     done: function(res, curr, count){
@@ -153,10 +155,11 @@
             for(var i=0;i<newData.length;i++){
                 layui.formSelects.render('limits'+newData[i].id, {
               //init: ["1", "请先选择机构"],       //默认值
-                skin: "normal", //多选皮肤normal|primary|default|danger|warm
+                skin: "primary", //多选皮肤normal|primary|default|danger|warm
                 height: "auto",        //是否固定高度, 38px | auto
                 radio: false,         //是否设置为单选模式
                 direction: "down", //显示方式向下显示
+                autoRow: true,
                 on: function(id, vals, val, isAdd, isDisabled){
                 },      //同formSelects.on
                 searchType: "dl"  //搜索框的位置

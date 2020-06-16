@@ -7,7 +7,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
   <link rel="stylesheet" href="../static/layui/css/layui.css" media="all">
-  <link rel="stylesheet" href="../static/modules/treetable-lay/treetable.css" media="all">
+  <link rel="stylesheet" href="../static/modules/treetable-lay/treetable.css">
   <link rel="stylesheet" href="../static/modules/opTable/opTable.css">
  
 </head>
@@ -267,7 +267,9 @@
 							, cols: [[
 							  {field: 'pid', title: 'ID'},
 								{field: '详单编号', title: '详单编号', sort: true},
+
 								{field: '组号', title: '组号',width: 50},
+								{field: '组序号', title: '组序号',width: 50},
 								{field: '客户姓名', title: '客户姓名'},
 								{field: '生产单号', title: '生产单号',width: 100},
 								{field: '大类', title: '大类'},
@@ -286,6 +288,7 @@
 								{field: '封边类型', title: '封边类型'},
 								{field: '合页槽', title: '合页槽'},
 								{field: '详单条码', title: '详单条码'},
+								{field: '详单备注', title: '详单备注'},
 								{field: '机器ID', title: '机器码'},
 								{field: '打印编号', title: '打印编号'}
 							]]
