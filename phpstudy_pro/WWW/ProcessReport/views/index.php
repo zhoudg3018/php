@@ -12,7 +12,7 @@
 <div class="layui-layout layui-layout-admin">
   <div class="layui-header">
     <div class="layui-logo">开洋木业</div>
-    <ul class="layui-nav layui-layout-right">
+     <ul id="right_meun" class="layui-nav layui-layout-right">
       <li class="layui-nav-item">
         <a href="javascript:;" id="admin_user">       
          <img src="http://t.cn/RCzsdCq" id class="layui-nav-img">
@@ -24,6 +24,11 @@
         </dl>
       </li>
       <li layadmin-event="logout"  class="layui-nav-item"><a id="Esc" >退出</a></li>
+            <li class="layui-nav-item layadmin-flexible" lay-unselect>
+            <a href="javascript:;" layadmin-event="flexible" title="侧边伸缩">
+                <i class="layui-icon layui-icon-shrink-right" id="LAY_app_flexible"></i>
+            </a>
+        </li>
     </ul>
   </div>
   <div id="hxNavbar"></div>
@@ -60,6 +65,7 @@ layui.extend({
                   window.sessionStorage.clear();
                   window.location.href="./user/login.html";
                 });
+              
           });
 
           $(document).ready(function(){
@@ -81,6 +87,31 @@ layui.extend({
                 }
             });
             layer.close(loading);
+               //左侧导航栏收缩功能动画效果
+               var i=0;
+               $('#LAY_app_flexible').click(function(){
+                //这里定义一个全局变量来方便判断动画收缩的效果,也就是放在最外面
+                if(i==0){
+                  $(".layui-side").animate({width:'toggle'});
+                  $(".layui-body").animate({left:'0px'});			
+                  $(".layui-footer").animate({left:'0px'});
+                  //$("#right_meun").hide();  
+                  i++;
+                }else{
+                  $(".layui-side").animate({width:'toggle'});
+                  $(".layui-body").animate({left:'200px'});
+                  $(".layui-footer").animate({left:'200px'});
+                  //$("#right_meun").show();  
+                  i--;
+                }		
+              });
+              //左侧导航栏收缩提示
+              $('#LAY_app_flexible').hover(function(){
+                layer.tips('收缩左侧导航栏', '#LAY_app_flexible', {tips:[4,'#FF8000'],time:0});
+              },function(){
+                layer.closeAll('tips'); 
+              });
+            
         });
 </script>
 </body>

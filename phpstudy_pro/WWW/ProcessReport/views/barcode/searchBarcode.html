@@ -50,7 +50,7 @@
 		  <div class="layui-inline"   >
             <label class="layui-form-label">工序名称</label>
       <div class="layui-input-block" style="width:300px;">
-			  <select class="seloption" lay-filter="required" name="gx_name" id="gx_name" xm-select="gx_name"xm-select-skin="normal" >
+			  <select class="seloption" lay-filter="required" name="gx_name" id="gx_name" xm-select="gx_name"xm-select-skin="normal" xm-select-search="">
 			  </select>
             </div>
           </div>
@@ -124,7 +124,7 @@
     direction: "down",        //显示方式向下显示
     on: function(id, vals, val, isAdd, isDisabled){
     },            //同formSelects.on
-   // searchType: "dl"    //搜索框的位置
+     searchType: "dl"    //搜索框的位置
     });
 
     layui.formSelects.data('gx_name', 'server', {

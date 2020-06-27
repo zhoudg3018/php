@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>layuiAdmin 角色管理</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link rel="stylesheet" href="../../static/layui/css/layui.css" media="all">
+  <link rel="stylesheet" href="../../static/style/admin.css" media="all">
+</head>
+<body>
+	<style type="text/css">
+      .layui-table-cell{
+        height:36px;
+        line-height: auto;
+        white-space:normal;
+    }
+	</style>
+  <div class="layui-fluid">   
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                   <label class="layui-form-label">单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号</label>
+                   <div class="layui-input-block">
+                     <input type="text" name="d_no" id="d_no"  placeholder="请输入" autocomplete="off" class="layui-input">
+                   </div>
+                 </div>
+                 <div class="layui-inline">
+                     <label class="layui-form-label">开始日期</label>
+                     <div class="layui-input-block">
+                       <input type="text" name="startTime" id="startTime"  placeholder="请输入" autocomplete="off" class="layui-input">
+                     </div>
+                   </div>
+                   <div class="layui-inline">
+                    <label class="layui-form-label">结束日期</label>
+                    <div class="layui-input-block">
+                      <input type="text" name="endTime" id="endTime"  placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                  </div>
+                 <div class="layui-inline">
+                     <label class="layui-form-label">不良描述</label>
+                      <div class="layui-input-block" style="width:300px;">
+                       <select class="seloption" lay-filter="required" name="t_content" id="t_content" xm-select="t_content" xm-select-skin="primary" xm-select-search="" >
+                       </select>
+                     </div>
+                  </div>
+                 <div class="layui-inline">
+                     <button class="layui-btn layuiadmin-btn-useradmin" id="LAY-user-front-search" lay-submit lay-filter="LAY-user-front-search">
+                     <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                     </button>
+               </div>
+             </div>    
+        </div>
+        <div class="layui-card-body">
+              <div style="padding-bottom: 10px;">
+                  <button class="layui-btn layuiadmin-btn-role" data-type="batchdel">删除</button>
+                  <button class="layui-btn layuiadmin-btn-role" data-type="addRow">添加</button>
+                  <button class="layui-btn layuiadmin-btn-role" data-type="reload">刷新</button>
+              </div>
+              <table id="LAY-check-table" lay-filter="LAY-check-table"></table>  
+              <script type="text/html" id="tableOneLineSave">
+                <!-- <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="save"><i class="layui-icon layui-icon-save"></i>保存</a>--> 
+                  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+              </script>
+              <br>
+              <div id="action" class="text-center">
+                <button type="button" name="btnSave" class="layui-btn" data-type="save"><i class="layui-icon layui-icon-ok-circle"></i>保存</button>				
+                <button type="button" name="btnReset" class="layui-btn layui-btn-primary" data-type="reload">取消</button>
+              </div>
+        </div>
+    </div>
+  </div>
+
+ <script src="../../static/layui/layui.js"></script>  
+ <script src="../../static/modules/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+ <link rel="stylesheet" href="../../static/modules/formSelects-v4.css" />
+  <script>
+  layui.config({
+    base: '../../static/' //静态资源所在路径
+  }).extend({
+    index: 'lib/index' //主入口模块
+  }).use(['index', 'table','formSelects','element','laydate'], function(){
+    var $ = layui.$
+    ,form = layui.form
+    ,table = layui.table
+    ,element = layui.element
+    ,laydate = layui.laydate
+    ,admin = layui.admin;
+    var formSelects = layui.formSelects;
+
+    //执行一个laydate实例
+    laydate.render({
+      elem: '#startTime', //指定元素
+      type:'date'
+    });
+     //执行一个laydate实例
+     laydate.render({
+      elem: '#endTime', //指定元素
+      type:'date'
+    });
+  	//获取基础数据
+			var result='';
+			function GetData(type,sfield) {
+					$.ajax({
+						url:'../../model/quality/qualityRecord.php',
+								type:"post",
+								dataType:"JSON",
+								data:{'type':type,'sfield':sfield},
+						async:false, 
+						success: (data) => {
+                if(data.msg='OK'){
+                  result=data.data;
+                }else{
+                  result=data.msg;
+                }
+						},
+						error:function(data){
+							$.messager.alert('错误',data.msg);
+						}
+					})
+			
+				return result;
+			};
+    var ConData= GetData('SELECT_C','');
+
+    selectfunc('t_content',false,ConData);
+    function selectfunc(selectID,radio,ConData){
+        layui.formSelects.render(selectID, {
+            //init: ["1", "请先选择机构"],              //默认值
+            skin: "primary", //多选皮肤normal|primary|default|danger|warm
+            height: "auto",                //是否固定高度, 38px | auto
+            radio: radio,                  //是否设置为单选模式
+            direction: "down",  //显示方式向下显示
+            autoRow: true,        
+            on: function(id, vals, val, isAdd, isDisabled){
+
+            },            //同formSelects.on
+             searchType: "dl"    //搜索框的位置
+            });
+
+            layui.formSelects.data(selectID, 'local', {
+            arr: ConData
+        }); 
+    }
+     var newData='';
+     var tableIns=table.render({ 
+      elem: "#LAY-check-table", 
+      url: '../../model/quality/qualityRecord.php', 
+      where:{type:'SELECT_TB'},
+      method:'post',
+      page:false,
+      limit:5000,
+      loading: true,
+      cols: [[{ type: "checkbox", fixed: "left" },
+       {title: '序号', type: 'numbers',minWidth:60, align: 'center'},
+      { field: "日期",minWidth:120, title: "记录日期", event: '日期'},
+      { field: "单号",minWidth:100, title: "单号", event: '单号',edit: 'text'},
+      { field: "产品名称",minWidth:100, title: "产品名称", event: '产品名称',edit: 'text'},
+      { field: "单位",minWidth:100, title: "单位", event: '单位',edit: 'text'},
+      { field: "数量",minWidth:100, title: "数量", event: '数量',edit: 'text'},
+      { field: "检验数量",minWidth:100, title: "检验数量", event: '检验数量',edit: 'text'},
+      { field: "不良数量",minWidth:100, title: "不良数量", event: '不良数量',edit: 'text'},
+     // { field: "不良率%",minWidth:100, title: "不良率%", event: '不良率%',edit: 'text'},
+      { field: "不良内容描述",minWidth:200, title: "不良内容描述(主题)", event: '不良内容描述',templet: function(d){
+          return  '<select name="t_content_'+ d.序号+'" id="t_content_'+ d.序号+'" lay-verify="required" xm-select="t_content_'+ d.序号+'"  xm-select-search="" xm-select-skin="primary"></select>';
+          }
+      },
+      { field: "备注",minWidth:200, title: "备注", event: '备注',edit: 'text'},
+      { field: "责任工序",minWidth:100, title: "责任工序", event: '责任工序',edit: 'text'},
+      { field: "检验员",minWidth:100, title: "检验员", event: '检验员',edit: 'text'},
+      { field: "序号",minWidth:150,title: "操作", align: "center", fixed: "right", toolbar: "#tableOneLineSave" }
+    ]],
+    text: "对不起，加载出现异常！" ,
+    done: function(res, curr, count){
+            newData = res.data;
+           $("[data-field='flg']").css('display','none'); //关键代码
+           $(".layui-table-body, .layui-table-box, .layui-table-cell").css('overflow', 'visible'); 
+            for(var i=0;i<newData.length;i++){
+              var tagID='t_content_'+newData[i].序号;
+              var content_v=newData[i].不良内容描述;
+              selectfunc(tagID,true,ConData);
+              layui.formSelects.value(tagID,(content_v+"").split(','));
+            }
+				}
+  });
+  
+
+
+  //监听搜索
+  form.on('submit(LAY-user-front-search)', function(data){
+    var field = data.field;
+    var data=GetData('SELECT_TB',field);
+    //执行重载
+    tableIns.reload({
+             data:data,
+             url:null
+					});
+  });
+  
+    var layTableId='LAY-check-table';
+    //事件
+    var active = {
+      batchdel: function(){
+        var checkStatus = table.checkStatus(layTableId)
+        ,checkData = checkStatus.data; //得到选中的数据
+        var checkD=[];
+        var bl=false;
+        if(checkData.length === 0){
+          return layer.msg('请选择数据');
+        }
+        for(var i=0;i<checkData.length;i++){
+          if(checkData[i]['flg']=='add'){
+            return layer.msg('选择的数据中有新增行,请先保存再删除或者单行删除!',{icon:5});
+          }
+        }
+        layer.confirm('确定删除吗？', function(index) {
+            if(checkData.length === 0){
+            return layer.msg('请选择数据');
+          }
+              //请求登入接口
+              admin.req({
+                    url: '../../model/quality/qualityRecord.php',
+                    data: {'checkData':checkData,'type':'DELETE_T'},
+                    method:'post',
+                    done: function(res){
+                      if(res.msg =='删除成功'){
+                        $("#LAY-user-front-search").click();
+                        layer.msg('已删除');
+                      }else{
+                        layer.msg(res);
+                      }
+                    }
+            });
+        });
+      },
+      addRow: function(){	//添加一行
+					var oldData = table.cache[layTableId];
+					console.log(oldData);
+					var newRow = {序号:new Date().valueOf(),
+                  产品名称:null,
+                  单位:null,
+                  检验数量:null,
+									不良数量:null,
+									不良内容描述:null,
+                  数量:null,
+                  日期: layui.util.toDateString(new Date(), 'yyyy-MM-dd'),
+                  检验员:null,
+                  单号:null,
+                  责任工序:null,
+									备注:null,
+                  flg:'add'
+                  };
+					oldData.push(newRow);
+					tableIns.reload({
+						data : oldData,
+            url:null
+					});
+				},
+        updateRow: function(obj){
+					var oldData = table.cache[layTableId];				
+					console.log(oldData);
+					for(var i=0, row; i < oldData.length; i++){
+						row = oldData[i];
+						if(row.序号 == obj.序号){
+              if(row.flg !='add'){
+								obj.flg='edit';
+							}
+							$.extend(oldData[i], obj);
+							return;
+						}
+					}
+					tableIns.reload({
+						data : oldData,
+            url:null
+					});
+				},
+        reload: function(){
+          $("#LAY-user-front-search").click();
+        },
+        removeEmptyTableCache: function(){
+					var oldData = table.cache[layTableId];		
+					for(var i=0, row; i < oldData.length; i++){
+						row = oldData[i];
+						if(!row || !row.序号){
+							oldData.splice(i, 1);    //删除一项
+						}
+						continue;
+					}
+					tableIns.reload({
+						data : oldData,
+            url:null
+					});
+				},
+				save: function(){
+					var oldData = table.cache[layTableId];
+					var DataArr=[];	
+					console.log(oldData);	
+					for(var i=0, row; i < oldData.length; i++){
+						row = oldData[i];
+							if(!row.日期  ){
+							layer.msg("检查每一行，日期必填！", { icon: 5 }); //提示
+							return;
+						}
+            var content=layui.formSelects.value('t_content_'+row.序号, 'valStr');
+            if(	row.不良内容描述 != content && (row.flg ==''|| row.flg == null)){
+                row.flg='edit';
+             }
+						//设备编号重复检查
+					/*	var count=0;
+						for(var j=0, jrow; j < oldData.length; j++){
+							jrow=oldData[j];
+							if(jrow.设备编号==row.设备编号){
+								count+=1;
+								if(count>=2){
+									layer.msg("设备编号:"+row.设备编号+"已重复！", { icon: 5 }); //提示
+									return;
+								}
+							}	
+						}
+          */
+						if((row.flg=='add'|| row.flg=='edit') && row.日期 ){
+              row.不良内容描述 = content;
+							DataArr.push(row);
+						}
+					}
+				
+					if(DataArr.length != 0){
+						if(DataArr.length>1000){
+							layer.msg('修改行数最大：1000！');
+							return;
+						}
+            $.ajax({
+                  url: '../../model/quality/qualityRecord.php',
+                  data: {'data':DataArr,'type':'SAVE'},
+                  method:'post',
+                  dataType:'json',
+                  success:function(data){
+                          if(data.msg='操作成功'){
+                              $("#LAY-user-front-search").click();
+                          }
+                        layer.msg(data.msg);
+                    },
+                      error:function(data){
+                          $.messager.alert('错误',data.msg);
+                    }
+                });
+					
+					}else{
+						layer.msg('无数据修改');
+					}
+				}
+    }  
+    //激活事件
+    var activeByType = function (type, arg) {
+				if(arguments.length === 2){					
+					active[type] ? active[type].call(this, arg) : '';
+				}else{
+					active[type] ? active[type].call(this) : '';
+				}
+    }
+
+
+
+    table.on('tool(LAY-check-table)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+    var data = obj.data //获得当前行数据
+    ,layEvent = obj.event; //获得 lay-event 对应的值
+    var tr = obj.tr; //获得当前行 tr 的DOM对象;
+				console.log(data);
+    switch(layEvent){
+    case "日期":
+          var field = $(this).data('field');
+            laydate.render({
+              elem: this.firstChild
+              , show: true //直接显示
+              , closeStop: this
+              , done: function (value, date) {
+                 data[field] = value;
+               // $.extend(obj.data, {field:value});
+                activeByType('updateRow', obj.data);	//更新行记录对象
+              }
+            });
+           
+          break;
+    case "单号":
+    case "产品名称":
+    case "单位":
+    case "数量":
+    case "检验数量":
+    case "不良数量":
+    case "备注":
+    case "责任工序":
+    case "检验员":
+						var nameVal = tr.find("td[data-field='"+event+"'] div").text();
+						$.extend(obj.data, {event: nameVal})
+            activeByType('updateRow', obj.data);	//更新行记录对象
+            break;
+    /* 
+          data.不良内容描述=layui.formSelects.value('t_content_'+data.序号, 'valStr');
+          $.ajax({
+                  url: '../../model/quality/qualityRecord.php',
+                  data: {'data':data,'type':'SAVE'},
+                  method:'post',
+                  dataType:'json',
+                  success:function(data){
+                          if(data.msg='操作成功'){
+                           tableIns.reload({
+                                where:{type:'SELECT_TB',d_no:$('#d_no').val()
+                                ,record_time:$('#record_time').val(),
+                                t_content:layui.formSelects.value('t_content', 'valStr')
+                                },
+                              });
+                              $("#LAY-user-front-search").click();
+                        }
+                        layer.msg(data.msg);
+                    },
+                      error:function(data){
+                          $.messager.alert('错误',data.msg);
+                    }
+                });
+              break;
+        */
+      case "del":
+      layer.confirm('真的删除行么？', function(index){
+        $.ajax({
+                 url: '../../model/quality/qualityRecord.php',
+                data: {'data':data,'type':'DELETE_ONE'},
+                method:'post',
+                dataType:'json',
+                success:function(data){
+                  if(data.msg =='删除成功'|| obj.data.flg=='add'){
+                    obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                    layer.close(index);
+                    activeByType('removeEmptyTableCache');
+                    }else{
+                      layer.alert(msg);
+                    }
+                  },
+                    error:function(data){
+                        $.messager.alert('错误',data.msg);
+                  }
+              });
+        });
+        break;						
+   }
+  });
+   //注册按钮事件
+   $('.layui-btn[data-type]').on('click', function () {
+                var type = $(this).data('type');
+                activeByType(type);
+    });
+
+});
+  </script>
+</body>
+</html>
+

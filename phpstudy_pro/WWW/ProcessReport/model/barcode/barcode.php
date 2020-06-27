@@ -49,9 +49,9 @@ Class QRCode{
                 $res = $pdo->prepare($query);
                 $res->execute();
                 if( $res->rowCount() <=0){
-                  echo "更新失败";//弹出对话框
+                  echo "扫描成功但更新失败";//弹出对话框
                 }else{
-                  echo " 更新成功";
+                  echo " 扫描成功且更新成功";
                 }
               }else{
                 echo " 扫描成功";

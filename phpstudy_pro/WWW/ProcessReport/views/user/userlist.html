@@ -21,7 +21,6 @@
               <input type="text" name="username" id="username"  placeholder="请输入" autocomplete="off" class="layui-input">
             </div>
           </div>
-         
           <div class="layui-inline">
             <label class="layui-form-label">姓名</label>
             <div class="layui-input-block">
@@ -96,6 +95,7 @@
     var userTable=table.render({
         elem: "#LAY-user-manage",
         url: '../../model/user/userlist.php',
+   
        page: {//开启分页
           layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
           ,first: '首页'

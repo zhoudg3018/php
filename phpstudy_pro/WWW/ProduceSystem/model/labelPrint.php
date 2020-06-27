@@ -62,7 +62,8 @@
 </head>
 <body>
 <script src="../static/layui/layui.js" ></script>  
-  <script src="../static/jquery-1.4.1.min.js" ></script>  
+  <script src="../static/layui/jquery.js" ></script> 
+  <script type="text/javascript" src="../static/layui/jquery.qrcode.min.js"></script> 
   <script>
  $(document).ready(function(){
 	
@@ -300,7 +301,26 @@
     }
     });
   }
-  //打印条形码 end
+
+  function createQrcode(id,text){
+    //每次先清空二维码容器
+    $("#qrcode"+id).html("");
+   // var qrcode = window.location.href;     //二维码内容（即该页面的路径）
+    
+    /* 生成二维码 */
+       $("#qrcode"+id).qrcode({
+            render: "canvas",            //设置渲染方式
+            width: 100,                  //设置宽度,默认生成的二维码大小是 256×256
+            height: 100,                 //设置高度
+            typeNumber: -1,                 //计算模式
+            background: "#ffffff",          //背景颜色
+            foreground: "black",             //前景颜色（粉色）
+            correctLevel:0,
+            text: text                      //设置二维码内容
+        });
+      }     
+     
+
 </script>
 
   <input type="text" name="ip" id="ip" value="127.0.0.1" /><br>
@@ -365,7 +385,10 @@
       <tr>
         <td>尺寸</td> <td Id="cpcc<?php echo $number ?>" ><?php echo $row2['门长'].'*'.$row2['门宽'].'*'.$row2['门厚'] ?></td>
         <td>封边</td>  <td  Id="fblx<?php echo $number ?>" ><?php echo $row2['封边类型']  ?></td>
-        <td rowspan="4" width="150 px"></td>
+        <td rowspan="4" width="150 px"> <!-- 存放二维码的容器 --><div id="qrcode<?php echo $number ?>" style="padding-left: 18px"></div>   
+     
+      </td>
+       
       </tr>
       <tr>
         <td>型号</td>  <td Id="xh<?php echo $number ?>" ><?php echo $row2['型号'] ?></td>
@@ -407,7 +430,17 @@
       ?></td>
         <td  Id="xdtm<?php echo $number ?>"  style="display:none"  > <?php echo $row2['详单条码'] ?></td>
         <td  Id="ID<?php echo $number ?>"  style="display:none"  > <?php echo $row2['机器码'] ?></td>
-    </table>     
+    </table> 
+    <script>
+       var j=<?php echo $number ?>;
+       var text ='/'+$("#ID"+j).text().replace(/\s+/g, "");
+       text +='/'+$("#ccCode"+j).text().replace(/\s+/g, "");
+       text +='/'+$("#fblxCode"+j).text().replace(/\s+/g, "");
+       text +='/0000/0000';
+       text +='/'+$("#qglxCode"+j).text().replace(/\s+/g, "");
+       text +='/0000/0000/0000/0000/0000/0000';
+       text +='/'+$("#xdtm"+j).text().replace(/\s+/g, "");
+     createQrcode(j,text);</script>    
     </br>
     </br>
   <?php 
