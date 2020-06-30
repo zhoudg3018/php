@@ -9,12 +9,13 @@ if( $type=='SELECT_TB'){
     echo selectFunTB($pdo);
 }else
 if( $type=='SELECT_R'){
-    $query = "SELECT id,rolename from sy_role order by id";
+    $query = "SELECT id AS value ,rolename AS name from sy_role order by id";
     echo selectFun($pdo,$query);
 }else if( $type=='SELECT_M'){
-   $query = "SELECT id,nm from sy_menu WHERE hr is not null order by id";
+  $query = "SELECT id AS value ,nm  AS name from sy_menu WHERE hr is not null order by id";
+ // $query = "SELECT id,nm from sy_menu WHERE hr is not null order by id";
     echo selectFun($pdo,$query);
-}else if( $type=='DELETE_T'){
+}else if( $type=='DELETE_T'|| $type=='DELETE_ONE'){
     echo delFun($pdo);
   }
  else if( $type=='EDIT_D'){
@@ -47,15 +48,21 @@ function selectFun($pdo,$query){
 }
 function delFun($pdo){
     $checkData=isset($_POST["checkData"])?$_POST["checkData"]:''; 
+    $id=isset($_POST["id"])?$_POST["id"]:''; 
     $query='';
-  
-    for($i = 0; $i < count($checkData); $i++) {
-     if($i==0){
-       $query="'".$checkData[$i]['id']."'";
-     }else{
-       $query=$query.",'".$checkData[$i]['id']."'";
-     }
-    }
+ 
+    if($checkData !=''){
+        for($i = 0; $i < count($checkData); $i++) {
+        if($i==0){
+          $query="'".$checkData[$i]['id']."'";
+        }else{
+          $query=$query.",'".$checkData[$i]['id']."'";
+        }
+        }
+      }
+      else if($id !=''){
+        $query="'$id'";
+      }
     $str= '{"code":0,"msg":"请选择数据","data":[]}';
     if(!empty($query)){
        //更新
@@ -107,6 +114,7 @@ function delFun($pdo){
         //大类
       $sql='';
       if( $roleArr!=''){
+        $roleArr=explode(",", $roleArr);
           $role='';
           for($i=0;$i <count($roleArr); $i++){
               $role=$role."'".$roleArr[$i]."',";

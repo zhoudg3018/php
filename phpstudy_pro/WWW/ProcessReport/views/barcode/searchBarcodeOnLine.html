@@ -63,24 +63,26 @@
       </div>
       
       <div class="layui-card-body">
-        <div style="padding-bottom: 10px;">
-          <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
+        <!--  <div style="padding-bottom: 10px;">
+           <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
           <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
           <button class="layui-btn layuiadmin-btn-useradmin" data-type="reload">刷新</button>
         </div>
-        
+        -->
         <table id="LAY-code-manage" lay-filter="LAY-code-manage"></table>
         <script type="text/html" id="imgTpl"> 
           <img style="display: inline-block; width: 50%; height: 100%;" src= {{ d.avatar }}>
         </script> 
         <script type="text/html" id="table-useradmin-webuser">
-           {{#  if(d.值 != 100){ }}
+             <!-- {{#  if(d.值 != 100){ }}
            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>修改</a>
             {{# } }}
+          -->
           <a class="layui-btn layui-btn-green layui-btn-xs" lay-event="video"><i class="layui-icon layui-icon-video"></i>查看</a>
-            {{#  if(d.值 != 100){ }}
-         <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
+            <!--   {{#  if(d.值 != 100){ }}
+        <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>
             {{# } }}
+            -->
         </script>
       </div>
     </div>
@@ -131,7 +133,7 @@
 
     layui.formSelects.data('gx_name', 'server', {
       type:'post',
-      url: '../../model/barcode/searchBarcode.php',
+      url: '../../model/barcode/searchBarcodeOnLine.php',
       data:{'type':'SELECT_GX'},
       success: function(id, url, searchVal, result){
       //选中，如： "1010101,1010103"，一定要转为数组格式，特别注意：[1010101,1010103]或["1010101","1010103"]都不能正常选中
@@ -141,11 +143,11 @@
     });
   });
  
-  var newData='';
+    var newData='';
   //table表做成
   var userTable=table.render({
         elem: "#LAY-code-manage",
-        url: '../../model/barcode/searchBarcode.php',
+        url: '../../model/barcode/searchBarcodeOnLine.php',
         page: {//开启分页
           layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
           ,first: '首页'
@@ -154,7 +156,8 @@
         toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
 				defaultToolbar: ['filter', {title:'Execl导出',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],//这里在右边显示 
         method:'post',
-        cols: [[{ type: "checkbox", fixed: "left" },
+        cols: [[
+        //{ type: "checkbox", fixed: "left" },
         {title: '序号', type: 'numbers',minWidth:60, align: 'center'},
         { field: "详单条码", minWidth:120, title: "详单条码", sort: !0 },
         { field: "订单编号", title: "订单编号", minWidth: 100 },
@@ -175,10 +178,10 @@
         { field: "类别", title: "类别", minWidth: 100,},
         { field: "工序", title: "状态", minWidth: 100},
         { field: "工序类型", title: "工序类型", minWidth: 100},
-        { field: "扫描时间", title: "扫描时间", minWidth: 100},
-        { field:"id",title: "操作", minWidth: 250, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
+        { field: "插入时间", title: "扫描时间", minWidth: 100},
+        { field: "行号",title: "操作", width: 80, align: "center", fixed: "right", toolbar: "#table-useradmin-webuser" }
         ]],
-        where : {
+         where : {
                type : 'SELECT_TB',
           } ,
      
@@ -186,6 +189,7 @@
         text: "对不起，加载出现异常！"
         ,done:function (res,currentCount) {
 				//***重点***：table渲染完成后渲染element进度条
+           $("[data-field='序号']").css('display','none'); //关键代码
                 element.render()
                 newData=res.data;
          }
@@ -253,7 +257,7 @@
                 maxmin: true,
                 area: ['800px','600px'],
                 shadeClose: true,
-                content:'./barcodeform.html?id='+data.id,
+                content:'./barcodeformOnLine.html?id='+data.行号,
                 btn: ['取消'],
                end: function () {  //刷新页面
                 }
@@ -330,11 +334,11 @@
 				exportDataTest();
 			}
 			});
-    
-  function GetExcelData() {
+
+      function GetExcelData() {
      var result='';
 					$.ajax({
-						url: '../../model/barcode/searchBarcode.php',
+						url: '../../model/barcode/searchBarcodeOnLine.php',
               type:"post",
               dataType:"JSON",
               data:{'type':'SELECT_E',
@@ -379,15 +383,15 @@ function exportDataTest() {
         excelData[i]['类别'],
         excelData[i]['工序'],
         excelData[i]['工序类型'],
-        excelData[i]['扫描时间']
+        excelData[i]['插入时间']
        ])
       }
     }
     excel.exportExcel({
       sheet1: data
-       }, '油漆扫描数据_'+layui.util.toDateString(new Date(), 'yyyyMMddHHmmss')+'(导出' + total + '条数据).xlsx', 'xlsx')
+       }, '免漆扫描数据_'+layui.util.toDateString(new Date(), 'yyyyMMddHHmmss')+'(导出' + total + '条数据).xlsx', 'xlsx')
       }
-    });
+  });
   </script>
 </body>
 </html>

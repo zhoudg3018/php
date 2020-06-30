@@ -154,6 +154,7 @@
       method:'post',
       page:false,
       limit:5000,
+      totalRow: true,
       loading: true,
       cols: [[{ type: "checkbox", fixed: "left" },
        {title: '序号', type: 'numbers',minWidth:60, align: 'center'},
@@ -162,8 +163,8 @@
       { field: "产品名称",minWidth:100, title: "产品名称", event: '产品名称',edit: 'text'},
       { field: "单位",minWidth:100, title: "单位", event: '单位',edit: 'text'},
       { field: "数量",minWidth:100, title: "数量", event: '数量',edit: 'text'},
-      { field: "检验数量",minWidth:100, title: "检验数量", event: '检验数量',edit: 'text'},
-      { field: "不良数量",minWidth:100, title: "不良数量", event: '不良数量',edit: 'text'},
+      { field: "检验数量",minWidth:100, title: "检验数量", event: '检验数量',edit: 'text',totalRow: true},
+      { field: "不良数量",minWidth:100, title: "不良数量", event: '不良数量',edit: 'text',totalRow: true},
      // { field: "不良率%",minWidth:100, title: "不良率%", event: '不良率%',edit: 'text'},
       { field: "不良内容描述",minWidth:200, title: "不良内容描述(主题)", event: '不良内容描述',templet: function(d){
           return  '<select name="t_content_'+ d.序号+'" id="t_content_'+ d.序号+'" lay-verify="required" xm-select="t_content_'+ d.序号+'"  xm-select-search="" xm-select-skin="primary"></select>';

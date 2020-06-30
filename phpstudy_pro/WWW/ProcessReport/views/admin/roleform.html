@@ -21,9 +21,11 @@
     </div>
     <div class="layui-form-item" >
       <label class="layui-form-label"  style="text-align: center;">角色筛选</label>
-      <div class="layui-input-block" id="tag_id">
+      <div class="layui-input-block" style="height: 120px;">
+        <select class="seloption" lay-filter="required" name="limits" id="limits" xm-select="limits" xm-select-skin="primary" xm-select-search="" >
+        </select>
       </div>
-    </div>
+      </div>
     <div class="layui-form-item">
       <label class="layui-form-label">具体描述</label>
       <div class="layui-input-block">
@@ -36,16 +38,17 @@
   </div>
 
   <script src="../../static/layui/layui.js"></script>
-  <script src="../../static/modules/selectM.js" charset="utf-8"></script>  
+  <script src="../../static/modules/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+  <link rel="stylesheet" href="../../static/modules/formSelects-v4.css" /> 
   <script>
   layui.config({
     base: '../../static/' //静态资源所在路径
   }).extend({
     index: 'lib/index' //主入口模块
-  }).use(['index', 'form','jquery','selectM'], function(){
+  }).use(['index', 'form','jquery','formSelects'], function(){
     var $ = layui.$
     ,form = layui.form ;
-    var selectM = layui.selectM;
+    var formSelects = layui.formSelects;
     			//获取基础数据
 			var result='';
 			function GetRoleData(type,role) {
@@ -69,25 +72,22 @@
 			
 				return result;
 			};
-      var tagIns = selectM({
-			//元素容器【必填】
-			elem: '#tag_id'
-			//候选数据【必填】
-			,data: GetRoleData('SELECT_M','')
-			//默认值
-		//	,selected: [12,17] 			
-			//最多选中个数，默认5
-			,max : 6
-			//input的name 不设置与选择器相同(去#.)
-			,name: 'limits'
-			//值的分隔符
-			,delimiter: ','
-			//候选项数据的键名
-			,field: {idName:'id',titleName:'nm'}
-    });
+      layui.formSelects.render('limits', {
+        //init: ["1", "请先选择机构"],              //默认值
+        skin: "primary", //多选皮肤normal|primary|default|danger|warm
+        height: "auto",                //是否固定高度, 38px | auto
+        radio: false,                  //是否设置为单选模式
+        direction: "down",  //显示方式向下显示
+        autoRow: true,        
+        on: function(id, vals, val, isAdd, isDisabled){
 
+        },            //同formSelects.on
+          searchType: "dl"    //搜索框的位置
+        });
 
-
+      layui.formSelects.data('limits', 'local', {
+      arr: GetRoleData('SELECT_M','')
+      }); 
   });
   </script>
 </body>

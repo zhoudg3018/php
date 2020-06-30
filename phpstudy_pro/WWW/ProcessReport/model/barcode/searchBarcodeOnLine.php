@@ -68,21 +68,21 @@ Class sQRCode{
     echo $str;
   }
    public function OneSearch(){
-    $pdo=$this->DBDA->DBLink();
-    $query = "SELECT  * FROM  工序进度表视图 where id='$this->id' limit 1";
-    $res = $pdo->prepare($query);
-    $res->execute();
-    $count=$res->rowCount();
+    $pdo=$this->DBDA->DBSQLLink();
+    $query = "SELECT TOP 1  * FROM  [dengguoDB].[dbo].[免漆线二码数据表视图] where 行号='$this->id';";
+    $res = $pdo->query($query);
+    $rows = $res->fetchAll(); 
+    $count = count($rows);
     $str='';
     if($count>0){    
       $str= '{"code":0,"msg":"OK","data":[';
-      $i=1;
-      while($row = $res->fetch(PDO::FETCH_ASSOC)){
-        $i++;
-        $str=$str.json_encode($row);
-        if($i<$count+1){
+      $i=0;
+      while($i<$count){
+        $str=$str.json_encode($rows[$i]);
+        if($i<$count-1){
           $str=$str.",";
         }
+        $i++;
       }
       $str=$str."]}";
     }else{
@@ -132,32 +132,32 @@ Class sQRCode{
     echo $str;
   }
  public function getGXData(){
-    $pdo=$this->DBDA->DBLink();
-    $query = "SELECT distinct 工序类型 AS name,工序类型 AS value FROM  工序进度表视图 where 工序类型 iS not NULL AND  工序类型<>''";
-    $res = $pdo->prepare($query);
-    $res->execute();
-    $count=$res->rowCount();
+    $pdo=$this->DBDA->DBSQLLink();
+    $query = "SELECT distinct 工序类型 AS name,工序类型 AS value FROM [dengguoDB].[dbo].[免漆线二码数据表视图];";
+    $res = $pdo->query($query);
+    $rows = $res->fetchAll(); 
+    $count = count($rows);
     $str='';
     if($count>0){    
       $str= '{"code":0,"msg":"OK","data":[';
-      $i=1;
-      while($row = $res->fetch(PDO::FETCH_ASSOC)){
-        $i++;
-        $str=$str.json_encode($row);
-        if($i<$count+1){
+      $i=0;
+      while($i<$count){
+          $str=$str.json_encode($rows[$i]);
+          if($i<$count-1){
           $str=$str.",";
-        }
+          }
+          $i++;
       }
       $str=$str."]}";
     }else{
        $str='{"code":1,"msg":"无数据","data":[]}';
     }
-    $pdo=null;
+   
     echo $str;
   }
 public function SearchTableData(){
     try{
-      $pdo=$this->DBDA->DBLink();
+      $pdo=$this->DBDA->DBSQLLink();
         //查询条件
         $sql='';
         if( $this->code !=''){
@@ -177,10 +177,10 @@ public function SearchTableData(){
             $sql=$sql." AND  工序类型 in ($gx)";
         }
         if( $this->sDateTime !=''){
-            $sql=$sql." AND  扫描时间 >='$this->sDateTime'";
+            $sql=$sql." AND  插入时间 >='$this->sDateTime'";
         }
         if( $this->eDateTime !=''){
-            $sql=$sql." AND  扫描时间 <='$this->eDateTime'";
+            $sql=$sql." AND  插入时间 <='$this->eDateTime'";
         }
         if( $this->detailNo !=''){
             $sql=$sql." AND  详单编号 ='$this->detailNo'";
@@ -189,32 +189,34 @@ public function SearchTableData(){
             $sql=$sql." AND  订单编号 ='$this->orderNo'";
         }
         //查询总数
-        $query = "SELECT id from 工序进度表视图  where 1=1 ".$sql;
-        $res = $pdo->prepare($query);
-        $res->execute();
-        $total=$res->rowCount();
+        $query="SELECT count(*) from  [dengguoDB].[dbo].[免漆线二码数据表视图]  where 1=1".$sql;
+        $rs = $pdo->query($query);
+        $total =$rs->fetchColumn();
         //分页页数计算
         $perpage=ceil($total/$this->limit);
         $offset=($this->page-1)*10;
 
-        $query = "SELECT * from 工序进度表视图  where 1=1 ".$sql."
-        order by 扫描时间  desc limit {$this->limit} offset {$offset} ";
-        $res = $pdo->prepare($query);
-        $res->execute();
-        $count=$res->rowCount();
+        $query = "select top {$this->limit} * 
+                from (select row_number() 
+                over(order by 插入时间 DESC) as rownumber,* 
+                from [dengguoDB].[dbo].[免漆线二码数据表视图]  where 1=1 ".$sql.") A
+                where rownumber>{$offset};";
+        $res = $pdo->query($query);
+        $rows = $res->fetchAll(); 
+        $count = count($rows);
         $str='';
         if($count>0){    
         $str= '{"code":0,"msg":"OK","perpage":'.$perpage.',"count":'.$total.',"data":[';
-        $i=1;
-        while($row = $res->fetch(PDO::FETCH_ASSOC)){
-            $i++;
-            $str=$str.json_encode($row);
-            if($i<$count+1){
+        $i=0;
+        while($i<$count){
+            $str=$str.json_encode($rows[$i]);
+            if($i<$count-1){
             $str=$str.",";
             }
+            $i++;
         }
         $str=$str."]}";
-        }else{
+       }else{
         $str='{"code":1,"msg":"无数据","perpage":'.$perpage.',"count":'.$total.',"data":[]}';
         }
         echo $str;
@@ -225,58 +227,59 @@ public function SearchTableData(){
   }
   public function GetExcelData(){
     try{
-      $pdo=$this->DBDA->DBLink();
-        //查询条件
-        $sql='';
-        if( $this->code !=''){
-        $sql=$sql." AND  详单条码 like '$this->code%'";
-        }
-        //工序
-        $gx_arr =explode(",", $this->gx_name);
-        if($this->gx_name!=''&&!empty($gx_arr)){
-            $gx='';
-            for($i=0;$i <count($gx_arr); $i++){
-                $gx=$gx."'".$gx_arr[$i]."',";
-                if($i==(count($gx_arr)-1)){
-                    $gx=substr($gx,0,strlen($gx)-1);
-                break;
-                }
-            }
-            $sql=$sql." AND  工序类型 in ($gx)";
-        }
-        if( $this->sDateTime !=''){
-            $sql=$sql." AND  扫描时间 >='$this->sDateTime'";
-        }
-        if( $this->eDateTime !=''){
-            $sql=$sql." AND  扫描时间 <='$this->eDateTime'";
-        }
-        if( $this->detailNo !=''){
-            $sql=$sql." AND  详单编号 ='$this->detailNo'";
-        }
-        if( $this->orderNo !=''){
-            $sql=$sql." AND  订单编号 ='$this->orderNo'";
-        }
-        $query = "SELECT * from 工序进度表视图  where 1=1 ".$sql."
-        order by 扫描时间  desc";
-        $res = $pdo->prepare($query);
-        $res->execute();
-        $count=$res->rowCount();
-        $str='';
-        if($count>0){    
-        $str= '{"code":0,"msg":"OK","data":[';
-        $i=1;
-        while($row = $res->fetch(PDO::FETCH_ASSOC)){
-            $i++;
-            $str=$str.json_encode($row);
-            if($i<$count+1){
-            $str=$str.",";
-            }
-        }
-        $str=$str."]}";
-        }else{
-        $str='{"code":1,"msg":"无数据","data":[]}';
-        }
-        echo $str;
+      $pdo=$this->DBDA->DBSQLLink();
+      //查询条件
+      $sql='';
+      if( $this->code !=''){
+      $sql=$sql." AND  详单条码 like '$this->code%'";
+      }
+      //工序
+      $gx_arr =explode(",", $this->gx_name);
+      if($this->gx_name!=''&&!empty($gx_arr)){
+          $gx='';
+          for($i=0;$i <count($gx_arr); $i++){
+              $gx=$gx."'".$gx_arr[$i]."',";
+              if($i==(count($gx_arr)-1)){
+                  $gx=substr($gx,0,strlen($gx)-1);
+              break;
+              }
+          }
+          $sql=$sql." AND  工序类型 in ($gx)";
+      }
+      if( $this->sDateTime !=''){
+          $sql=$sql." AND  插入时间 >='$this->sDateTime'";
+      }
+      if( $this->eDateTime !=''){
+          $sql=$sql." AND  插入时间 <='$this->eDateTime'";
+      }
+      if( $this->detailNo !=''){
+          $sql=$sql." AND  详单编号 ='$this->detailNo'";
+      }
+      if( $this->orderNo !=''){
+          $sql=$sql." AND  订单编号 ='$this->orderNo'";
+      }
+
+
+      $query = "select * from [dengguoDB].[dbo].[免漆线二码数据表视图]  where 1=1 ".$sql;
+      $res = $pdo->query($query);
+      $rows = $res->fetchAll(); 
+      $count = count($rows);
+      $str='';
+      if($count>0){    
+      $str= '{"code":0,"msg":"OK","data":[';
+      $i=0;
+      while($i<$count){
+          $str=$str.json_encode($rows[$i]);
+          if($i<$count-1){
+          $str=$str.",";
+          }
+          $i++;
+      }
+      $str=$str."]}";
+     }else{
+      $str='{"code":1,"msg":"无数据","data":[]}';
+      }
+      echo $str;
     } catch(PDOException $e){
         $msg='PG'.$e->getMessage();
         echo '{"code":1,"msg":'.$msg.',"data":[]}';

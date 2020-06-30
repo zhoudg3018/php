@@ -10,7 +10,7 @@ $pdo=$DBDA->DBLink();
 if( $type=='SELECT_TB'){
   echo selectFun($pdo);
 }else
-if( $type=='DELETE_T'){
+if( $type=='DELETE_T'||$type=='DELETE_ONE'){
   echo delFun($pdo);
 }else
 if( $type=='SELECT_E'){
@@ -65,7 +65,7 @@ function EditFun($pdo,$type){
       $query = "INSERT INTO 用户列表 (id,姓名,密码,用户类别,用户编号,工序名称,工序类型) values ("
       ."(SELECT CASE WHEN  MAX(id) IS NOT NULL THEN MAX(id)+1 ELSE 1 END  FROM  用户列表),'$name','$password','$role','$username','$gx_name','$gx_type')";
     }else{
-      $query = "UPDATE 用户列表 SET  用户类别='$role', 密码='$password', 姓名='$name' , 工序名称='$gx_name',工序类型='$gx_type'   WHERE 用户编号 ='$username'";
+      $query = "UPDATE 用户列表 SET  用户类别='$role', 密码='$password', 姓名='$name' , 工序名称='$gx_name',工序类型='$gx_type'  WHERE 用户编号 ='$username'";
     }
   }
   $res = $pdo->prepare($query);
@@ -75,7 +75,7 @@ function EditFun($pdo,$type){
     if($count>0){
       $str='{"code":0,"msg":"更新成功","data":[]}';
     }else{
-      $str ='{"code":0,"msg":"更新成功","data":[]}';
+      $str ='{"code":0,"msg":"更新失败或者该数据已被删除","data":[]}';
     }
   }
   return $str;
@@ -165,15 +165,19 @@ function selectFun($pdo){
     return $str;
 }
 function delFun($pdo){
-  $checkData=isset($_POST["checkData"])?$_POST["checkData"]:''; 
+  $checkData=isset($_POST["checkData"])?$_POST["checkData"]:'';
+  $userBh=isset($_POST["userBh"])?$_POST["userBh"]:''; 
   $query='';
-
-  for($i = 0; $i < count($checkData); $i++) {
-   if($i==0){
-     $query="'".$checkData[$i]['用户编号']."'";
-   }else{
-     $query=$query.",'".$checkData[$i]['用户编号']."'";
-   }
+  if($checkData !=''){
+    for($i = 0; $i < count($checkData); $i++) {
+    if($i==0){
+      $query="'".$checkData[$i]['用户编号']."'";
+    }else{
+      $query=$query.",'".$checkData[$i]['用户编号']."'";
+    }
+    }
+  }else if($userBh !=''){
+    $query="'$userBh'";
   }
   $str= '{"code":0,"msg":"请选择数据","data":[]}';
   if(!empty($query)){

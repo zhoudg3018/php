@@ -46,21 +46,26 @@
 					number : true,
 					check  : false,
 					show : function(code){
-						$gx_name=window.sessionStorage.getItem('工序名称');
-						if($gx_name !=''){
-								$.ajax({
-								url:'../../model/barcode/barcode.php',
-								data:{'code':code,'gx_name':window.sessionStorage.getItem('工序名称')},
-								type:"POST",
-								success:function(res){
-									layer.msg(res);
-								},
-								error:function(data){
-									layer.msg("index.php错误");
-								}
-							});
-						}else{
-							layer.msg("只限工序账号才能扫码!");
+						code=code.trim();
+						if(code !=''){
+							$gx_name=window.sessionStorage.getItem('工序名称');
+							if($gx_name !=''){
+									$.ajax({
+									url:'../../model/barcode/barcode.php',
+									data:{'code':code,'gx_name':window.sessionStorage.getItem('工序名称')},
+									type:"POST",
+									success:function(res){
+										$('#barCode').val('');
+										layer.msg(res);
+									},
+									error:function(data){
+										$('#barCode').val('');
+										layer.msg("index.php错误");
+									}
+								});
+							}else{
+								layer.msg("只限工序账号才能扫码!");
+							}
 						}
 						//layer.msg(code);
 					}
