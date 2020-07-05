@@ -14,35 +14,53 @@
 </head>
 <body >
 	<style type="text/css">
-		.table-overlay .layui-table-cell{height: auto; overflow: visible;}
+	  .layui-table-cell { overflow: visible !important;} 
+   
+    /*解决下拉框被表格覆盖样式问题*/
+    .layui-form-select dl {
+        z-index: 9999;
+    }
+   /*  .layui-table-box {
+        overflow: visible
+    }
+    .layui-table-body{
+		overflow:visible;
+    }
+	*/
+	.layui-table-cell{
+	height:60px;
+	line-height: auto;
+	white-space:normal;
+	}
+	
 	</style>
-	<div >
-
-		 <div class="layui-fluid">
-			<label class="layui-btn ">设备资产表</label>
-		  </div>
-			</br>
-			<div class="layui-fluid">
-			&nbsp;&nbsp;&nbsp;&nbsp;设备编号:&nbsp;&nbsp;&nbsp;&nbsp;
-			<div class="layui-inline">
-			  <input class="layui-input" name="设备编号" id="设备编号" autocomplete="off">
-			</div>
-			&nbsp;&nbsp;&nbsp;名称:&nbsp;&nbsp;&nbsp;&nbsp;
-			<div class="layui-inline">
-			  <input class="layui-input" name="名称" id="名称" autocomplete="off">
-			</div>
-			<button class="layui-btn" data-type="reload">搜索</button>
-		  </div>
-		  <br>
-		  <div class="layui-form-item">
-			<label class="layui-form-label"  style="text-align: center;">大类</label>
-			<div class="layui-input-block" style="width: 50%;"id="tag_ids2">
-			</div>
-		<div>
-			 
-
-		<div class="layui-card"  style="height: 100vh;width: 100%;">
-			<div class="layui-card-body layui-text"  >
+	<div class="layui-fluid">
+		<div class="layui-card">
+			<div>
+				<label class="layui-btn ">设备资产表</label>
+				<div class="layui-form-item">
+				<div class="layui-inline" style="margin-top: 5px;">
+					<label class="layui-form-label"  style="text-align: center;">设备编号</label>
+					<div class="layui-input-block" >
+						<input type="text" name="设备编号" id="设备编号"  placeholder="请输入" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline" style="margin-top: 5px;">
+					<label class="layui-form-label"  style="text-align: center;">名&nbsp;&nbsp;&nbsp;&nbsp;称</label>
+					<div class="layui-input-block">
+						<input type="text" name="名称" id="名称"  placeholder="请输入" autocomplete="off" class="layui-input">
+					</div>
+				</div>
+				<div class="layui-inline" style="margin-top: 5px;">
+				  <label class="layui-form-label"  style="text-align: center;">大&nbsp;&nbsp;&nbsp;&nbsp;类</label>
+				  <div class="layui-input-block"  style="width:200px;">
+				  <select class="seloption" lay-filter="required" name="tag_ids2" id="tag_ids2" xm-select="tag_ids2" xm-select-skin="primary" xm-select-search="" >
+				  </select>
+				</div>
+				</div>
+				<button class="layui-btn layuiadmin-btn-role" data-type="reload">搜索</button>        
+			  </div>
+			  <div class="layui-card-body ">
 				<div id="toolbar">
 					<button type="button" class="layui-btn layui-btn" data-type="addRow" title="添加一行">
 						<i class="layui-icon layui-icon-add-1"></i> 添加一行
@@ -50,33 +68,38 @@
 					<button type="button" class="layui-btn layui-btn-normal" id="upload-change">选择文件</button>
 					<input type="button"  class="layui-btn" id="upload-change-action" value="Excel导入"></input>
 				</div>
+			
 				<div id="tableRes" class="table-overlay">
 					<table id="dataTable" lay-filter="dataTable" class="layui-hide"></table>
 				</div>
+				
 				<div id="action" class="text-center">
 					<button type="button" name="btnSave" class="layui-btn" data-type="save"><i class="layui-icon layui-icon-ok-circle"></i>保存</button>				
 					<button type="button" name="btnReset" class="layui-btn layui-btn-primary" data-type="reset">取消</button>
 				</div>
 			</div>
+			</div>
 		</div>
 	</div>
+
 	<!--recommended script position-->
 	<script src="../../static/layui/layui.js" charset="utf-8"></script>
-	<script src="../../static/modules/selectM.js" charset="utf-8"></script>
+	<script src="../../static/modules/formSelects-v4.js" type="text/javascript" charset="utf-8"></script>
+	<link rel="stylesheet" href="../../static/modules/formSelects-v4.css" />
 	<script src="../../static/layui_exts/excel.js" charset="utf-8"></script>
 	<script type="text/javascript">
 	//layui 模块化引用
-		layui.use(['jquery', 'table', 'layer','selectM','laydate','upload','excel'], function(){
+		layui.use(['jquery', 'table', 'layer','formSelects','laydate','upload','excel'], function(){
 			var $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
-			var selectM = layui.selectM;
+			var formSelects = layui.formSelects;
 			var laydate = layui.laydate;
 			var upload = layui.upload;
 			var excel = layui.excel;
-			
-			
+
 			//获取基础数据
 			var result='';
 			function GetAndUpateData(type,id,DataArr,bigType) {
+				var load=layer.load(1);
 					$.ajax({
 						url:'../../model/device/deviceList.php',
 								type:"post",
@@ -93,6 +116,7 @@
 						
 							switch (type){
 								case 'SELECT_TY':
+								case 'SELECT_BM':
 								case 'SELECT_TB':
 										result=data.data;
 										break;
@@ -110,10 +134,10 @@
 							$.messager.alert('错误',data.msg);
 						}
 					})
-			
+					layer.close(load);
 				return result;
 			};
-		// 大类下拉框
+	/*	// 大类下拉框
 		var typeData=GetAndUpateData('SELECT_TY','','','');
 		 //多选标签-所有配置
 		var tagIns2 = selectM({
@@ -132,13 +156,35 @@
 			//候选项数据的键名
 			,field: {idName:'序号',titleName:'大类'}
 		});
-		var tbData=GetAndUpateData('SELECT_TB','','',tagIns2.values);
+	*/
+	var typeData=GetAndUpateData('SELECT_TY','','','');
+	var bmData=GetAndUpateData('SELECT_BM','','','');
+	selectfunc('tag_ids2',false,typeData);
+    function selectfunc(selectID,radio,data){
+        layui.formSelects.render(selectID, {
+            //init: ["1", "请先选择机构"],              //默认值
+            skin: "primary", //多选皮肤normal|primary|default|danger|warm
+            height: "auto",                //是否固定高度, 38px | auto
+            radio: radio,                  //是否设置为单选模式
+            direction: "down",  //显示方式向下显示
+            autoRow: true,        
+            on: function(id, vals, val, isAdd, isDisabled){
+
+            },            //同formSelects.on
+             searchType: "dl"    //搜索框的位置
+            });
+
+            layui.formSelects.data(selectID, 'local', {
+            arr: data
+        }); 
+    }
+		var tbData=GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr'));
 	
 			//准备视图对象
 		window.viewObj = {
 			tbData: tbData,
 			typeData:typeData,
-			renderSelectOptions: function(data, settings){
+		/*	renderSelectOptions: function(data, settings){
 				settings =  settings || {};
 				var valueField = settings.valueField || 'value',
 					textField = settings.textField || 'text',
@@ -157,72 +203,98 @@
 					html.push('</option>');
 				}
 				return html.join('');
-			}
+			}*/
 		};
-
+		
 			//数据表格实例化			
             var tbWidth = $("#tableRes").width();
-			var layTableId = "layTable";
+			var layTableId = "dataTable";
 			var tableIns = table.render({
 				elem: '#dataTable',
 				id: layTableId,
-				data: viewObj.tbData,
-				limit: 10000,
-				lineheight: 40,
+				//url:'../../model/device/deviceList.php',
+				data:tbData,
+      			method:'post',
+				  page: {//开启分页
+					layout: ['count', 'prev', 'page', 'next', 'limit','refresh', 'skip']
+					,first: '首页'
+					,last:'尾页'
+					},
 				loading: true,
 				totalRow: true,
-				
 				// height: 'full-200',
 				toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
 				defaultToolbar: ['filter', {title:'Execl导出',layEvent: 'LAYTABLE_EXCEL',icon: 'layui-icon-export'}],//这里在右边显示 
 				even: false, //不开启隔行背景
 				cols: [[
-					{title: '序号', type: 'numbers',width:60, align: 'center',totalRowText: '合计'},
-					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center'},
-					{field: '大类', title: '大类',width:150, align: 'center',templet: function(d){
-						var options = viewObj.renderSelectOptions(viewObj.typeData, {valueField: "序号",textField:'大类',selectedValue: d.大类});
-						return '<a lay-event="type"></a><select name="type" lay-filter="type"><option value="">请选择分类</option>' + options + '</select>';
+					{title: '序号', type: 'numbers', align: 'center',totalRowText:'合计'},
+					{field: '设备编号', title: '设备编号',width:90, event: '设备编号',edit: 'text', align: 'center',sort: true},
+				//	{field: '大类', title: '大类',width:160, align: 'center',templet: function(d){
+					//	return  '<select name="type'+ d.id+'" id="type'+ d.id+'" lay-verify="required" xm-select="type'+ d.id+'"  xm-select-search="" xm-select-skin="primary"></select>';
+				//	}},
+					{field: '大类', title: '大类',width:190, align: 'center',templet: function(d){
+						return  '<select name="type'+ d.id+'" id="type'+ d.id+'" lay-verify="required" xm-select="type'+ d.id+'"  xm-select-search="" xm-select-skin="primary"></select>';
 					}},
-					{field: '规格', title: '规格', width:60,align: 'center', event: '规格',edit: 'text'},
-					{field: '规格', title: '规格', width:60,align: 'center', event: '规格',edit: 'text'},
-					{field: '单位', title: '单位',width:60, align: 'center', event: '单位',edit: 'text'},
-					{field: '数量', title: '数量', width:60,align: 'center', event: '数量',edit: 'text',totalRow: true},
-					{field: '金额', title: '金额',width:60,align: 'center',  event: '金额',edit: 'text',totalRow: true},
-					{field: '出厂时间', title: '出厂时间', width:90,event: '出厂时间',edit: 'text'},
-					{field: '生产厂家', title: '生产厂家',width:90,align: 'center', event: '生产厂家',edit: 'text'},
+					{field: '名称', title: '名称', width:180,align: 'center', event: '规格',edit: 'text'},
+					{field: '规格', title: '规格', width:150,align: 'center', event: '规格',edit: 'text'},
+					{field: '单位', title: '单位',align: 'center', event: '单位',edit: 'text'},
+					{field: '数量', title: '数量',align: 'center', event: '数量',edit: 'text',totalRow: true},
+					//{field: '金额', title: '金额',width:60,align: 'center',  event: '金额',edit: 'text',totalRow: true},
+					//{field: '出厂时间', title: '出厂时间', event: '出厂时间',edit: 'text'},
+					{field: '生产厂家', title: '生产厂家',width:200,align: 'center', event: '生产厂家',edit: 'text'},
 					{field: '购置时间', title: '购置时间',width:90,align: 'center', event: '购置时间',edit: 'text'},
-					{field: '规定使用年限', title: '规定使用年限',width:120,align: 'center', event: '规定使用年限',edit: 'text'},
-					{field: '备注', title: '备注',width:90,align: 'center', event: '备注',edit: 'text'},
-					{field: '记录人', title: '记录人',width:90,align: 'center', event: '记录人',edit: 'text'},
-					{field: '记录时间', title: '记录时间',width:90,align: 'center', event: '记录时间',edit: 'text'},
-					{field: '购买价格', title: '购买价格',width:90,align: 'center', event: '购买价格',edit: 'text',totalRow: true},
-					{field: '设备负责人', title: '设备负责人',width:90,align: 'center', event: '设备负责人',edit: 'text'},
-					{field: '机器原值', title: '机器原值',width:90,align: 'center', event: '机器原值',edit: 'text'},
-					{field: '机器净值', title: '机器净值',width:90,align: 'center', event: '机器净值',edit: 'text'},
-					{field: '使用部门', title: '使用部门',width:90,align: 'center', event: '使用部门',edit: 'text'},
-					{field: '品牌', title: '品牌',width:90,align: 'center', event: '品牌',edit: 'text'},
-					{field: '生产能力', title: '生产能力',width:90,align: 'center', event: '生产能力',edit: 'text'},
-					{field: '使用日期', title: '使用日期', width:90,align: 'center',event: '使用日期',edit: 'text'},
-					{field: '固定资产转移单', title: '固定资产转移单', width:150,align: 'center',event: '固定资产转移单',edit: 'text'},
-					{field: '附件', title: '附件',width:90,align: 'center', event: '附件',edit: 'text'},
-					{field: '使用状态', title: '是否启用',width:90,align: 'center', event: 'state', templet: function(d){
+					{field: '规定使用年限', title: '年限',align: 'center', event: '规定使用年限',edit: 'text'},
+					{field: '备注', title: '备注',align: 'center', event: '备注',edit: 'text'},
+					//{field: '记录人', title: '记录人',align: 'center', event: '记录人',edit: 'text'},
+					{field: '记录时间', title: '记录时间',width:120,align: 'center', event: '记录时间',edit: 'text'},
+				//	{field: '购买价格', title: '购买价格',align: 'center', event: '购买价格',edit: 'text',totalRow: true},
+				//	{field: '设备负责人', title: '设备负责人',align: 'center', event: '设备负责人',edit: 'text'},
+				//	{field: '机器原值', title: '机器原值',align: 'center', event: '机器原值',edit: 'text'},
+				//	{field: '机器净值', title: '机器净值',align: 'center', event: '机器净值',edit: 'text'},
+					{field: '使用部门', title: '使用部门',align: 'center', width:160,event: '使用部门',templet: function(d){
+						return  '<select name="bm'+ d.id+'" id="bm'+ d.id+'" lay-verify="required" xm-select="bm'+ d.id+'"  xm-select-search="" xm-select-skin="primary"></select>';
+					}},
+				//	{field: '品牌', title: '品牌',align: 'center', event: '品牌',edit: 'text'},
+				//	{field: '生产能力', title: '生产能力',align: 'center', event: '生产能力',edit: 'text'},
+				//	{field: '使用日期', title: '使用日期', align: 'center',event: '使用日期',edit: 'text'},
+				//	{field: '固定资产转移单', title: '固定资产转移单', width:150,align: 'center',event: '固定资产转移单',edit: 'text'},
+				//	{field: '附件', title: '附件',align: 'center', event: '附件',edit: 'text'},
+					{field: '使用状态', title: '是否启用',align: 'center',width:80, event: 'state', templet: function(d){
 						var html = ['<input type="checkbox" name="state" lay-skin="switch" lay-text="是|否"'];
 						html.push(d.使用状态 > 0 ? ' checked' : '');
 						html.push('/>');
 						return html.join('');
 					}},	
 							
-					{field: 'id', title: '操作',width:90,align: 'center', templet: function(d){
+					{field: 'id', title: '操作',width:80,align: 'center', templet: function(d){
 						return '<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del" lay-id="'+ d.id +'"><i class="layui-icon layui-icon-delete"></i>移除</a>';
 					}},
 				]],
+				where:{'type':'SELECT_TB',
+									  'bigType':layui.formSelects.value('tag_ids2', 'valStr'),
+									  'name':$('#名称').val(),
+									  'sbbh':$('#设备编号').val()
+									},
 				done: function(res, curr, count){
 					$("[data-field='flg']").css('display','none'); //关键代码
 					viewObj.tbData = res.data;
+
+					for(var i=0;i<viewObj.tbData.length;i++){
+						var tagID='type'+viewObj.tbData[i].id;
+						var type=viewObj.tbData[i].大类;
+						selectfunc(tagID,true,typeData);
+						layui.formSelects.value(tagID,(type+"").split(','));
+						//
+						var bmID='bm'+viewObj.tbData[i].id;
+						var bm=viewObj.tbData[i].使用部门;
+						selectfunc(bmID,true,bmData);
+						layui.formSelects.value(bmID,(bm+"").split(','));
+					}
+				
 				}
 			});
-		
 			//选完文件后不自动上传
+			var loading='';
 			var upload = upload.render({
 				elem: '#upload-change'
 				,url: '../../model/upload/excelUpload.php' //改成您自己的上传接口
@@ -233,61 +305,87 @@
 				,dataType:'JSON'
 				,bindAction: '#upload-change-action'
 				,before: function(input){    
+					loading=layer.load(1);
 					var data = {};    
-					data.field = "设备编号,大类,名称,规格,单位,数量,金额,出厂时间,生产厂家,购置时间,规定使用年限,备注,记录人,记录时间,"
-					+"购买价格,设备负责人,机器原值,机器净值,使用部门,品牌,生产能力,使用日期,固定资产转移单,附件,使用状态";
-					this.data=data;  
+					//data.field = "设备编号,大类,名称,规格,单位,数量,金额,出厂时间,生产厂家,购置时间,规定使用年限,备注,记录人,记录时间,"
+					//+"购买价格,设备负责人,机器原值,机器净值,使用部门,品牌,生产能力,使用日期,固定资产转移单,附件,使用状态";
+					data.field = "设备编号,大类,名称,规格,单位,数量,生产厂家,购置时间,规定使用年限,备注,记录时间,使用部门,使用状态";
+					data.type='SBB';
+					this.data=data;
 					}  
 				,done: function(res){
 					layer.msg(res.msg);
-					if(res.msg=='上传成功'){
+					layer.close(loading);
+					if(res.code==0){
+						tableIns.reload({
+							data : GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr'))
+						});
+					}
+					
+				}
+					/*if(res.msg=='上传成功'){
 						var oldData = table.cache[layTableId];
 						console.log(oldData);
 						var newRow;
+						var typeV='';
+						var bmV ='';
 						for(var i=0; i< res.data.length;i++){
 							var data=res.data[i];
+							for(var j=0;j < typeData.length;j++){
+								if(data['大类']==typeData[j]['大类']){
+									typeV=typeData[j]['序号'];
+									break;
+								}
+							}
+							for(var j=0;j < bmData.length;j++){
+								if(data['使用部门']==bmData[j]['部门名称']){
+									bmV=typeData[j]['部门编号'];
+									break;
+								}
+							}
 							newRow = {id: new Date().valueOf(), 
-							设备编号: (Array(4).join(0) + data['设备编号']).slice(-4),
-							大类:data['大类'],
+							设备编号: (Array(8).join(0) + data['设备编号']).slice(-8),
+							大类:typeV,
 							名称:data['名称'],
 							规格:data['规格'],
 							单位:data['单位'],
 							数量:data['数量'],
-							金额:data['金额'],
-							出厂时间:data['出厂时间'],
+						//	金额:data['金额'],
+						//	出厂时间:data['出厂时间'],
 							生产厂家:data['生产厂家'],
 							购置时间:data['购置时间'],
 							规定使用年限:data['规定使用年限'],
 							备注:data['备注'],
-							记录人:data['记录人'],
+						//	记录人:data['记录人'],
 							记录时间:data['记录时间'],
-							购买价格:data['购买价格'],
-							设备负责人:data['设备负责人'],
-							机器原值:data['机器原值'],
-							机器净值:data['机器净值'],
-							使用部门:data['使用部门'],
-							品牌:data['品牌'],
-							生产能力:data['生产能力'],
-							使用日期:data['使用日期'],
-							固定资产转移单:data['固定资产转移单'],
-							附件:data['附件'],
-							使用状态: 0,
+						//	购买价格:data['购买价格'],
+						//	设备负责人:data['设备负责人'],
+						//	机器原值:data['机器原值'],
+						//	机器净值:data['机器净值'],
+							使用部门:bmV,
+						//	品牌:data['品牌'],
+						//	生产能力:data['生产能力'],
+						//	使用日期:data['使用日期'],
+						//	固定资产转移单:data['固定资产转移单'],
+						//	附件:data['附件'],
+							使用状态: data['使用状态']=='在用'? 1:0,
 							flg:'insert'};
 							oldData.push(newRow);
 						}
-						tableIns.reload({
-							data : oldData
-						});
-					}
-				}
 
+						
+					
+					}*/
+			
+				
 			});
 		
 			//定义事件集合
 			var active = {
 				addRow: function(){	//添加一行
-					var oldData = table.cache[layTableId];
+					//var oldData = table.cache[layTableId];
 					console.log(oldData);
+					var oldData =GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr'));
 					var newRow = {id: new Date().valueOf(), 
 									设备编号:null,
 									大类:null,
@@ -295,29 +393,32 @@
 									规格:null,
 									单位:null,
 									数量:null,
-									金额:null,
-									出厂时间:null,
+								//	金额:null,
+								//	出厂时间:null,
 									生产厂家:null,
 									购置时间:null,
 									规定使用年限:null,
 									备注:null,
-									记录人:null,
-									记录时间:layui.util.toDateString(new Date(), 'yyyy-MM-dd HH:mm:ss'),
-									购买价格:null,
-									设备负责人:null,
-									机器原值:null,
-									机器净值:null,
+								//	记录人:null,
+									记录时间:layui.util.toDateString(new Date(), 'yyyy-MM-dd'),
+								//	购买价格:null,
+								//	设备负责人:null,
+								//	机器原值:null,
+								//	机器净值:null,
 									使用部门:null,
-									品牌:null,
-									生产能力:null,
-									使用日期:null,
-									固定资产转移单:null,
-									附件:null,
+								//	品牌:null,
+								//	生产能力:null,
+								//	使用日期:null,
+								//	固定资产转移单:null,
+								//	附件:null,
 									使用状态: 0,
 									flg:'insert'};
-					oldData.push(newRow);
+					//oldData.push(newRow);
+					var page=$(".layui-laypage-em").next().html();
+					oldData.splice((page-1)*10,0,newRow)
 					tableIns.reload({
-						data : oldData
+						page:{curr:page},
+						data : oldData,
 					});
 				},
 				updateRow: function(obj){
@@ -334,7 +435,8 @@
 						}
 					}
 					tableIns.reload({
-						data : oldData
+						page:{curr:$(".layui-laypage-em").next().html()},
+						data : GetAndUpateData('SELECT_TB','',''),
 					});
 				},
 				removeEmptyTableCache: function(){
@@ -347,7 +449,8 @@
 						continue;
 					}
 					tableIns.reload({
-						data : oldData
+						page:{curr:$(".layui-laypage-em").next().html()},
+						data : GetAndUpateData('SELECT_TB','',''),
 					});
 				},
 				save: function(){
@@ -356,9 +459,23 @@
 					console.log(oldData);	
 					for(var i=0, row; i < oldData.length; i++){
 						row = oldData[i];
-							if(!row.大类  ){
+						var typeValue=layui.formSelects.value('type'+row.id, 'valStr');
+						/*if(!typeValue ){
 							layer.msg("检查每一行，请选择分类！", { icon: 5 }); //提示
 							return;
+						}*/
+						if(row.设备编号.length == 0 || row.设备编号.length >8){
+							layer.msg("字数限定：1~8!", { icon: 5 }); //提示
+							return;
+						}
+
+						
+						if(	row.大类 != typeValue && (row.flg !='insert')){
+							row.flg='edit';
+						}
+						var bmValue=layui.formSelects.value('bm'+row.id, 'valStr');
+						if(	row.使用部门 != bmValue && (row.flg !='insert')){
+							row.flg='edit';
 						}
 						//设备编号重复检查
 						var count=0;
@@ -372,7 +489,9 @@
 								}
 							}	
 						}
-						if((row.flg=='insert'|| row.flg=='edit') && row.大类 ){
+						if(row.flg=='insert'|| row.flg=='edit'){
+							row.大类 = typeValue;
+							row.使用部门 = bmValue;
 							DataArr.push(row);
 						}
 					}
@@ -384,9 +503,10 @@
 						}
 						var msg =GetAndUpateData('UPIN','',DataArr,'');
 						if(msg='保存成功'){
-							var data =GetAndUpateData('SELECT_TB','','',tagIns2.values);
+							var data =GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr'));
 							if(data !=null){
 								tableIns.reload({
+									page:{curr:$(".layui-laypage-em").next().html()},
 									data : data
 								});
 							}
@@ -398,13 +518,15 @@
 				},
 				reset: function(){
 					tableIns.reload({
-					data : GetAndUpateData('SELECT_TB','','',tagIns2.values),
+						page:{curr:$(".layui-laypage-em").next().html()},
+					data : GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr')),
 					});
 				},
 				reload: function(){
-						var data =GetAndUpateData('SELECT_TB','','',tagIns2.values);
+						var data =GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr'));
 						if(data !=null){
 							tableIns.reload({
+								page:{curr:1},
 								data : data
 							});
 						 }
@@ -439,8 +561,8 @@
                 var data = obj.data, event = obj.event, tr = obj.tr; //获得当前行 tr 的DOM对象;
 				console.log(data);
                 switch(event){
-					case "type":
-						//console.log(data);
+					/*case "type":
+						console.log(data);
 						var select = tr.find("select[name='type']");
 						if(select){						
 							var selectedVal = select.val();
@@ -451,10 +573,10 @@
 							$.extend(obj.data, {'大类': selectedVal});
 							activeByType('updateRow', obj.data);	//更新行记录对象
 						}
-						break;
-					case "出厂时间":
+						break;*/
+				//	case "出厂时间":
 					case "记录时间":
-					case "使用日期":
+				//	case "使用日期":
 					case "购置时间":
 								var field = $(this).data('field');
 								laydate.render({
@@ -473,20 +595,20 @@
 					case "规格":
 					case "单位":
 					case "数量":
-					case "金额":
+					//case "金额":
 					case "生产厂家":
 					case "规定使用年限":
 					case "备注":
-					case "记录人":
-					case "购买价格":
-					case "设备负责人":
-					case "机器原值":
-					case "机器净值":
-					case "使用部门":
-					case "品牌":
-					case "生产能力":
+				//	case "记录人":
+				//	case "购买价格":
+				//	case "设备负责人":
+				//	case "机器原值":
+				//	case "机器净值":
+					//case "使用部门":
+				//	case "品牌":
+				//	case "生产能力":
 					
-					case "固定资产转移单":
+				//	case "固定资产转移单":
 						var nameVal = tr.find("td[data-field='"+event+"'] div").text();
 						$.extend(obj.data, {event: nameVal})	
 						activeByType('updateRow', obj.data);	//更新行记录对象
@@ -503,6 +625,7 @@
 							var msg=GetAndUpateData('DELETE',obj.data.id,'','');
 							if(msg =='删除成功'|| obj.data.flg=='insert'){
 							obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+							layer.alert(msg);
 							layer.close(index);
 							activeByType('removeEmptyTableCache');
 						  }else{
@@ -526,39 +649,44 @@
  */
 function exportDataTest() {
     // 如果数据量特别大，最好直接传入 AOA 数组，减少内存/CPU消耗
-    var data = [
-      ['设备编号','大类','名称','规格','单位','数量','金额','出厂时间','生产厂家','购置时间','规定使用年限','备注','记录人','记录时间',
-	  '购买价格','设备负责人','机器原值','机器净值','使用部门','品牌','生产能力','使用日期','固定资产转移单','附件','使用状态']
-	]
-	var total=viewObj.tbData.length;
+   // var data = [
+   //   ['设备编号','大类','名称','规格','单位','数量','金额','出厂时间','生产厂家','购置时间','规定使用年限','备注','记录人','记录时间',
+//	  '购买价格','设备负责人','机器原值','机器净值','使用部门','品牌','生产能力','使用日期','固定资产转移单','附件','使用状态']
+//	]
+	var data = [
+      ['设备编号','大类','名称','规格','单位','数量','生产厂家','购置时间','规定使用年限','备注','记录时间','使用部门','使用状态']
+	];
+	
+	var ExceLData=GetAndUpateData('SELECT_TB','','',layui.formSelects.value('tag_ids2', 'valStr'));
+	var total=ExceLData.length;
     if (total> 0) {
       // 造 num 条数据
       for (var i = 0; i < total; i++) {
         data.push([
-		viewObj.tbData[i]['设备编号'],
-		viewObj.tbData[i]['大类'],
-		viewObj.tbData[i]['名称'],
-		viewObj.tbData[i]['规格'],
-		viewObj.tbData[i]['单位'],
-		viewObj.tbData[i]['数量'],
-		viewObj.tbData[i]['金额'],
-		viewObj.tbData[i]['出厂时间'],
-		viewObj.tbData[i]['生产厂家'],
-		viewObj.tbData[i]['购置时间'],
-		viewObj.tbData[i]['规定使用年限'],
-		viewObj.tbData[i]['备注'], 
-		viewObj.tbData[i]['记录人'], 
-		viewObj.tbData[i]['记录时间'], 
-		viewObj.tbData[i]['购买价格'],
-		viewObj.tbData[i]['设备负责人'],
-		viewObj.tbData[i]['机器原值'],
-		viewObj.tbData[i]['使用部门'],
-		viewObj.tbData[i]['品牌'],
-		viewObj.tbData[i]['生产能力'],
-		viewObj.tbData[i]['使用日期'],
-		viewObj.tbData[i]['固定资产转移单'],
-		viewObj.tbData[i]['附件'],
-		viewObj.tbData[i]['使用状态']
+		ExceLData[i]['设备编号'],
+		ExceLData[i]['大类'],
+		ExceLData[i]['名称'],
+		ExceLData[i]['规格'],
+		ExceLData[i]['单位'],
+		ExceLData[i]['数量'],
+		//ExceLData[i]['金额'],
+		//ExceLData[i]['出厂时间'],
+		ExceLData[i]['生产厂家'],
+		ExceLData[i]['购置时间'],
+		ExceLData[i]['规定使用年限'],
+		ExceLData[i]['备注'], 
+		//ExceLData[i]['记录人'], 
+		ExceLData[i]['记录时间'], 
+		//ExceLData[i]['购买价格'],
+		//ExceLData[i]['设备负责人'],
+		//ExceLData[i]['机器原值'],
+		ExceLData[i]['使用部门'],
+		//ExceLData[i]['品牌'],
+		//ExceLData[i]['生产能力'],
+		//ExceLData[i]['使用日期'],
+		//ExceLData[i]['固定资产转移单'],
+		//ExceLData[i]['附件'],
+		ExceLData[i]['使用状态']
         ])
       }
     }
